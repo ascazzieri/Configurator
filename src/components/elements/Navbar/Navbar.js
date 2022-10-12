@@ -1,37 +1,128 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import './Navbar.css'
+import Sendconf from '../Sendconf/Sendconf'
+import DateTime from '../DateTime/DateTime'
 
-function Navbar() {
+
+
+
+
+function Navbar(props) {
+    const { onDashboardChange, onThingworxChange, onOPC_clientChange, onThingworx_logsChange, onOPC_client_logsChange } = props;
+
+
+
+    const handlePageChange = useCallback(event => {
+        switch (event.target.name) {
+            case 'Dashboard':
+                onDashboardChange(true)
+                onThingworxChange(false)
+                onOPC_clientChange(false)
+                onThingworx_logsChange(false)
+                onOPC_client_logsChange(false)
+                break;
+
+            case 'Thingworx':
+                onDashboardChange(false)
+                onThingworxChange(true)
+                onOPC_clientChange(false)
+                onThingworx_logsChange(false)
+                onOPC_client_logsChange(false)
+                break;
+
+            case 'OPC_Client':
+                onDashboardChange(false)
+                onThingworxChange(false)
+                onOPC_clientChange(true)
+                onThingworx_logsChange(false)
+                onOPC_client_logsChange(false)
+                break;
+
+            case 'Thingworx_logs':
+                onDashboardChange(false)
+                onThingworxChange(false)
+                onOPC_clientChange(false)
+                onThingworx_logsChange(true)
+                onOPC_client_logsChange(false)
+                break;
+
+            case 'OPC_Client_logs':
+                onDashboardChange(false)
+                onThingworxChange(false)
+                onOPC_clientChange(false)
+                onThingworx_logsChange(false)
+                onOPC_client_logsChange(true)
+                break;
+
+            default:
+                onDashboardChange(true)
+                onThingworxChange(false)
+                onOPC_clientChange(false)
+                onThingworx_logsChange(false)
+                onOPC_client_logsChange(false)
+                break;
+
+        }
+
+    })
+
     return (
         <nav className="navbar navbar-expand-md navbar-dark bg-dark">
+
             <a className="navbar-brand brand-color"><img className='navbar-brand-logo' src="./imgs/applied_logo_icon-50x50.png" width="30" height="30" alt="applied-logo" />Configurator</a>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
             </button>
             <div className="collapse navbar-collapse" id="navbarNavDropdown">
-                <ul className="navbar-nav">
-                    <li className="nav-item active">
-                        <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#">Features</a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#">Pricing</a>
-                    </li>
-                    <li className="nav-item dropdown">
-                        <a className="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Dropdown link
-                        </a>
-                        <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a className="dropdown-item" href="#">Action</a>
-                            <a className="dropdown-item" href="#">Another action</a>
-                            <a className="dropdown-item" href="#">Something else here</a>
-                        </div>
-                    </li>
-                </ul>
+                <div className='container'>
+                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li className="nav-item active">
+                            <a onClick={handlePageChange} className="nav-link" name="Dashboard">Dashboard</a>
+                        </li>
+                        <li className="nav-item">
+                            <a onClick={handlePageChange} className="nav-link" name="Thingworx">Thingworx</a>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Driver</a>
+                            <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a onClick={handlePageChange} className="dropdown-item" name="OPC_Client">OPC_UA</a>
+                                <a onClick={handlePageChange} className="dropdown-item" name="Modbus">Modbus</a>
+
+                            </div>
+                        </li>
+                        <li className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Logs
+                            </a>
+                            <div className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a onClick={handlePageChange} className="dropdown-item" name="Thingworx_logs">Thingworx_agent_logs</a>
+                                <a onClick={handlePageChange} className="dropdown-item" name="OPC_Client_logs">OPC_client_logs</a>
+
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <DateTime />
+                <Sendconf
+                    text="Send Configuration"
+                />
+
             </div>
+
+
         </nav>
+
+
+
+
+
+
+
+
+
+
+
     )
 }
 

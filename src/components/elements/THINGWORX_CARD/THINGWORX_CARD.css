@@ -1,0 +1,12 @@
+.border-padding {
+    padding: 30px;
+}
+
+.box-margin {
+    margin: 0px 5px 30px 5px
+}
+
+.hidetext {
+    -webkit-text-security: disc;
+  
+}

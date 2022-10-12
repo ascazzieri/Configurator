@@ -1,0 +1,19 @@
+.tw-dashboard {
+    margin: 0;
+    text-align: center;
+}
+.carousel-control-next-icon {
+    background-color: grey;
+    border-radius: 50%;
+    
+}
+.carousel-control-prev-icon {
+    background-color: grey;
+    border-radius: 50%;
+}
+.carousel-control-prev {
+    width: auto;
+}
+.carousel-control-next {
+    width: auto;
+}

@@ -4,3 +4,6 @@
 .navbar-brand-logo {
     margin: 10px;
 }
+a {
+    cursor: pointer;
+}
