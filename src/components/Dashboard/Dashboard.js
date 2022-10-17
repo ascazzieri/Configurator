@@ -1,17 +1,16 @@
 import React from 'react'
+import './Dashboard.css'
 import OPCUA_DASHBOARD from '../OPCUA_DASHBOARD/OPCUA_DASHBOARD'
 import THINGWORX_DASHBOARD from '../THINWORX_DASHBOARD/THINGWORX_DASHBOARD';
-import Refreshconf from '../elements/Refreshconf/Refreshconf'
+
 
 const Dashboard = () => {
     return (
-        <>
+        <div className='dashboard'>
         <THINGWORX_DASHBOARD />
         <OPCUA_DASHBOARD />
-        <Refreshconf 
-        text="Refresh configuration"
-        />
-        </>
+       
+        </div>
     )
 }
 

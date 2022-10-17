@@ -11,15 +11,7 @@ import CHECKBOX_FORM from '../CHECKBOX_FORM/CHECKBOX_FORM'
 const THINGWORX_CARD = (props) => {
 
     const [proxyState, setProxyState] = useState(false)
- 
 
- 
-  
-
-  /*   React.useEffect(() => {
-        const btn = document.getElementsByTagName('div')
-        console.log(btn)
-    }) */
 
     return (
         <div className='box-margin'>

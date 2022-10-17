@@ -3,7 +3,7 @@ import './PROTOCOL_TABLE.css'
 
 
 const PROTOCOL_TABLE = (props) => {
-    let { channels, headers, values } = props;
+    let { channels, headers, values, cardNumber } = props;
 
 
 
@@ -26,8 +26,9 @@ const PROTOCOL_TABLE = (props) => {
                     {values.map((value, index) =>
                         <tr key={Math.random()}>
                             <th key={Math.random()} scope="row">{index + 1}</th>
-                            {value.map((insideValue, indx) =>
-                                <td key={Math.random()}>{insideValue}</td>
+                            {value.map((insideValue, indx) => (cardNumber === 2 && indx === 2) ? <td className='hidetext' key={Math.random()}>{insideValue}</td> : <td key={Math.random()}>{insideValue}</td>
+
+
                             )}
                         </tr>
 
@@ -85,6 +86,6 @@ const PROTOCOL_TABLE = (props) => {
 
 PROTOCOL_TABLE.defaultProps = {
     headers: ["1", "2", "3", "4", "5"],
-    values: [["1", "2", "3", "4", "5"],["1", "2", "3", "4", "5"]]
+    values: [["1", "2", "3", "4", "5"], ["1", "2", "3", "4", "5"]]
 }
 export default PROTOCOL_TABLE

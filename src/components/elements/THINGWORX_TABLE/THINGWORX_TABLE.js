@@ -18,7 +18,8 @@ function THINGWORX_TABLE(props) {
                 <table className={props.table_style}>
                     <thead className="thead-dark">
                         <tr>
-                            {cardNumber === 1 && <><th scope="col">{headers[0]}</th>
+                            {cardNumber === 1 && <>
+                                <th scope="col">{headers[0]}</th>
                                 <th scope="col">{headers[1]}</th>
                                 <th scope="col" onChange={handleProxyChange}>{headers[2]}</th></>}
 
@@ -52,10 +53,10 @@ function THINGWORX_TABLE(props) {
 }
 
 THINGWORX_TABLE.defaultProps = {
-  headers: ["example1", "example2", "example3", "example4"],
-  values: ["example1", "example2", "example3", "example4"],
-  title: "Example title",
-  cardNumber: 2
+    headers: ["example1", "example2", "example3", "example4"],
+    values: ["example1", "example2", "example3", "example4"],
+    title: "Example title",
+    cardNumber: 2
 }
 
 export default THINGWORX_TABLE

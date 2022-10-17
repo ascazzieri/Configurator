@@ -3,50 +3,60 @@ import './THINGWORX_DASHBOARD.css'
 import THINGWORX_TABLE from '../elements/THINGWORX_TABLE/THINGWORX_TABLE'
 import Pagenum from '../elements/Pagenum/Pagenum'
 import thingworx from './thingworx_datas'
-
-let TW_headers = [];
-let TW_values = [];
-
-let proxy_headers = [];
-let proxy_values = [];
+import Refreshconf from '../elements/Refreshconf/Refreshconf'
+import { get_twx_conf } from '../../config'
 
 
-
-for (let key in thingworx) {
-    if (thingworx.hasOwnProperty(key)) {
-        TW_headers.push(key);
-        TW_values.push(thingworx[key])
-    }
-}
-
-for (let key in TW_values[2]) {
-    if (TW_values[2].hasOwnProperty(key)) {
-        proxy_headers.push(key);
-        proxy_values.push(TW_values[2][key])
-
-
-    }
-}
-
-if (proxy_values[0] === true) {
-    TW_values[2] = 'true';
-} else if (proxy_values[0] === false) {
-    TW_values[2] = 'false';
-}
 /* console.log(proxy_values) */
 /* console.log(proxy_headers);
 console.log(proxy_values) */
 
 
-
-
-
-
-
 const THINGWORX_DASHBOARD = (props) => {
 
 
+    const [Thingworx, updateThingworx] = useState(thingworx)
+  
+
+
+    let TW_headers = [];
+    let TW_values = [];
+
+    let proxy_headers = [];
+    let proxy_values = [];
+
+
+
+    for (let key in Thingworx) {
+        if (Thingworx.hasOwnProperty(key)) {
+            TW_headers.push(key);
+            TW_values.push(Thingworx[key])
+        }
+    }
+
+    for (let key in TW_values[2]) {
+        if (TW_values[2].hasOwnProperty(key)) {
+            proxy_headers.push(key);
+            proxy_values.push(TW_values[2][key])
+
+
+        }
+    }
+
+    if (proxy_values[0] === true) {
+        TW_values[2] = 'true';
+    } else if (proxy_values[0] === false) {
+        TW_values[2] = 'false';
+    }
+
+
     const [isProxy, setIsProxy] = useState(proxy_values[0])
+
+
+
+
+
+
 
     return (
         <>
@@ -88,7 +98,7 @@ const THINGWORX_DASHBOARD = (props) => {
                                     title="Proxy server"
                                     table_style="table table-secondary table-bordered table-sm"
                                 />
-                                
+
                             </div></>}
 
 
@@ -107,7 +117,13 @@ const THINGWORX_DASHBOARD = (props) => {
                 </div>
 
             </div>
+            <Refreshconf
+                text="Refresh TW configuration"
+                ClickToRefresh={get_twx_conf}
+                updateComponent={updateThingworx}
+                toUpdate={get_twx_conf}
 
+            />
 
 
 

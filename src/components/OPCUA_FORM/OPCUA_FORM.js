@@ -1,8 +1,6 @@
 import React from 'react'
 import './OPCUA_FORM.css'
 import OPCUA_CARD from '../elements/OPCUA_CARD/OPCUA_CARD'
-import { IoIosArrowForward } from 'react-icons/io';
-import { IoIosArrowBack } from 'react-icons/io'
 import Pagenum from '../elements/Pagenum/Pagenum';
 
 
@@ -65,11 +63,11 @@ const OPCUA_FORM = () => {
 
                     </div>
                 </div>
-                <a className="carousel-control-prev" href="#carouselOPCUAForm" role="button" data-slide="prev">
+                <a className="carousel-control-prev carousel-control-width" href="#carouselOPCUAForm" role="button" data-slide="prev">
                     <span className="carousel-control-prev-icon" aria-hidden="true"></span>
 
                 </a>
-                <a className="carousel-control-next" href="#carouselOPCUAForm" role="button" data-slide="next">
+                <a className="carousel-control-next carousel-control-width" href="#carouselOPCUAForm" role="button" data-slide="next">
                     <span className="carousel-control-next-icon" aria-hidden="true"></span>
 
                 </a>

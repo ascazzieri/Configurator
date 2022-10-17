@@ -58,7 +58,7 @@ EncryptionKeys.splice((3, (3 * (channels.length - 1))));
 
 
 
-export { channels, server_headers, server_values, users_headers, users_values, tags_headers, tags_values, encryption_headers, encryption_values };
+export { protocol, channels, server_headers, server_values, users_headers, users_values, tags_headers, tags_values, encryption_headers, encryption_values };
 
 /* export { channels, Keys, ConnectionParametersKeys, DeviceID, ConnectionParameters, SamplingInterval, TagsFileName, SelectAllTagsByDefault, ThingName };
  */

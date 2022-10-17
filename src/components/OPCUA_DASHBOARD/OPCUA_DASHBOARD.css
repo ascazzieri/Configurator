@@ -2,3 +2,6 @@
     margin: 0;
     text-align: center;
 }
+.carousel-control-width {
+    width: 15%;
+}

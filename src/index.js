@@ -7,12 +7,14 @@ import './index.css';
 import App from './App';
 /* require('bootstrap') */
 
-
-
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+
     <App />
 );
+
+
+
+
 
 

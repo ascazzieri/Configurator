@@ -1,22 +1,17 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import './CHECKBOX_FORM.css'
-
-
-
-
-
 
 
 const CHECKBOX_FORM = (props) => {
 
     const { checkbox_state } = props;
 
-    const handleClick = useCallback(event => {
+    const handleClick = (event) => {
         checkbox_state(event.target.checked)
 
     }
 
-    )
+    
     return (
         <>
             <div className="form-group form-check">

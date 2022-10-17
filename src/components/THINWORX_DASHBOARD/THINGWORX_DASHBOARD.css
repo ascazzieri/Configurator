@@ -17,3 +17,6 @@
 .carousel-control-next {
     width: auto;
 }
+.carousel-control-width {
+    width: 15%;
+}
