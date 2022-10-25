@@ -1,3 +1,6 @@
 .table-margin {
     margin: 60px
 }
+.fixed-width {
+    width: 30px;
+}

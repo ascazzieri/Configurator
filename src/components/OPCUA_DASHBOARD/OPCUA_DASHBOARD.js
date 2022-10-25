@@ -1,52 +1,51 @@
-import React, {useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import './OPCUA_DASHBOARD.css'
 import PROTOCOL_TABLE from '../elements/PROTOCOL_TABLE/PROTOCOL_TABLE'
 import Pagenum from '../elements/Pagenum/Pagenum'
 import Refreshconf from '../elements/Refreshconf/Refreshconf'
 /* import { protocol, channels, server_headers, server_values, users_headers, users_values, tags_headers, tags_values, encryption_headers, encryption_values } from './opcua_datas' */
-import { protocol } from '../../config'
-import { get_opc_conf } from '../../config'
+import { getProtocolConf } from '../../config'
 
 
 const OPCUA_DASHBOARD = () => {
 
-  const [Protocol, updateProtocol] = useState(protocol)
+  const [Protocol, updateProtocol] = useState(getProtocolConf())
 
-let { channels } = Protocol.opcua;
-  
-let server_headers = [];
-let server_values = [];
+  let { channels } = Protocol.opcua;
 
-let users_headers = [];
-let users_values = [];
+  let server_headers = [];
+  let server_values = [];
 
-let tags_headers = [];
-let tags_values = [];
+  let users_headers = [];
+  let users_values = [];
 
-let encryption_headers = [];
-let encryption_values = [];
+  let tags_headers = [];
+  let tags_values = [];
 
-let Keys = [];
-let ConnectionParametersKeys = [];
-let AutenticationKeys = [];
-let EncryptionKeys = [];
+  let encryption_headers = [];
+  let encryption_values = [];
+
+  let Keys = [];
+  let ConnectionParametersKeys = [];
+  let AutenticationKeys = [];
+  let EncryptionKeys = [];
 
 
 
-channels.map(channel => {
+  channels.map(channel => {
     let { connection_parameter, device_ID, sampling_interval, tags_file_name, select_all_tags_by_default, thing_name } = channel;
     for (const [key, values] of Object.entries(channel)) {
-        Keys.push(key)
+      Keys.push(key)
     }
 
     for (const [ckeys, cvalues] of Object.entries(connection_parameter)) {
-        ConnectionParametersKeys.push(ckeys)
+      ConnectionParametersKeys.push(ckeys)
     }
     for (const [akeys, avalues] of Object.entries(connection_parameter.authentication)) {
-        AutenticationKeys.push(akeys)
+      AutenticationKeys.push(akeys)
     }
     for (const [ekeys, evalues] of Object.entries(connection_parameter.encryption)) {
-        EncryptionKeys.push(ekeys)
+      EncryptionKeys.push(ekeys)
     }
     server_headers = [Keys[0], ConnectionParametersKeys[0], ConnectionParametersKeys[1]];
     server_values.push([device_ID, connection_parameter.opc_server_ip, connection_parameter.opc_server_port])
@@ -60,13 +59,12 @@ channels.map(channel => {
     encryption_headers = [EncryptionKeys[0], EncryptionKeys[1], EncryptionKeys[2]]
     encryption_values.push([connection_parameter.encryption.enabled.toString(), connection_parameter.encryption.cert_filename, connection_parameter.encryption.key_filename])
 
-})
+  })
 
-Keys.splice(6, (6 * (channels.length - 1)));
-ConnectionParametersKeys.splice(4, (4 * (channels.length - 1)));
-AutenticationKeys.splice(3, (3 * (channels.length - 1)));
-EncryptionKeys.splice((3, (3 * (channels.length - 1))));
-
+  Keys.splice(6, (6 * (channels.length - 1)));
+  ConnectionParametersKeys.splice(4, (4 * (channels.length - 1)));
+  AutenticationKeys.splice(3, (3 * (channels.length - 1)));
+  EncryptionKeys.splice((3, (3 * (channels.length - 1))));
 
 
   return (
@@ -84,7 +82,8 @@ EncryptionKeys.splice((3, (3 * (channels.length - 1))));
               />
               <PROTOCOL_TABLE
                 title="OPCUA Server"
-                cardNumber = {1}
+                cardNumber={1}
+                password={null}
                 headers={server_headers}
                 values={server_values}
                 channels={channels}
@@ -104,7 +103,8 @@ EncryptionKeys.splice((3, (3 * (channels.length - 1))));
               />
               <PROTOCOL_TABLE
                 title="OPCUA Users"
-                cardNumber = {2}
+                cardNumber={2}
+                password={2}
                 channels={channels}
                 headers={users_headers}
                 values={users_values}
@@ -125,7 +125,8 @@ EncryptionKeys.splice((3, (3 * (channels.length - 1))));
               <PROTOCOL_TABLE
 
                 title="OPCUA Tags"
-                cardNumber = {3}
+                cardNumber={3}
+                password={null}
                 channels={channels}
                 headers={tags_headers}
                 values={tags_values}
@@ -146,7 +147,8 @@ EncryptionKeys.splice((3, (3 * (channels.length - 1))));
               <PROTOCOL_TABLE
 
                 title="OPCUA Encryption"
-                cardNumber = {4}
+                cardNumber={4}
+                password={null}
                 channels={channels}
                 headers={encryption_headers}
                 values={encryption_values}
@@ -176,9 +178,8 @@ EncryptionKeys.splice((3, (3 * (channels.length - 1))));
       </div>
       <Refreshconf
         text="Refresh OPC configuration"
-        ClickToRefresh= {get_opc_conf}
         updateComponent={updateProtocol}
-        toUpdate={get_opc_conf}
+        toUpdate={getProtocolConf}
       />
 
 

@@ -1,20 +1,23 @@
 import React from 'react'
 import './Refreshconf.css'
+import {TfiReload} from 'react-icons/tfi'
 
-const Reafreshconf = (props) => {
+const Refreshconf = (props) => {
 
-    const { ClickToRefresh, updateComponent } = props;
+    const { updateComponent} = props;
+
 
     const handleClick = () => {
-        ClickToRefresh();
-        updateComponent(props.toUpdate)
+        let refreshedConf = props.toUpdate;
+        updateComponent(refreshedConf)
+      
 
     }
 
     return (
         <>
-            <div className='container'>
-                <button type="button" className="btn btn-primary btn-lg btn-block container-fluid" onClick={handleClick}>{props.text}</button>
+            <div className='container refresh-container'>
+                <button type="button" className="btn btn-primary btn-sm refresh-button" onClick={handleClick}><TfiReload /> {props.text}</button>
 
             </div>
 
@@ -28,5 +31,9 @@ const Reafreshconf = (props) => {
 
 
 }
+Refreshconf.defaultProps = {
+    isProxy: "",
+    text: "Refresh"
+}
 
-export default Reafreshconf
+export default Refreshconf

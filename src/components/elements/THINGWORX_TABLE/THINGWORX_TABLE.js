@@ -1,15 +1,15 @@
 import React from 'react'
 import './THINGWORX_TABLE.css'
 
+
 function THINGWORX_TABLE(props) {
-    let { headers, values, onProxyChange, cardNumber } = props;
+    let { headers, values, cardNumber} = props;
 
-    function handleProxyChange(event) {
-        onProxyChange(event.target.value[0])
-        console.log(event.target.value[0])
-
-
+  /*   function handleProxyChange() {
+        checkProxy(event.target.value)
+        console.log('ciao')
     }
+ */
 
     return (
         <>
@@ -21,7 +21,7 @@ function THINGWORX_TABLE(props) {
                             {cardNumber === 1 && <>
                                 <th scope="col">{headers[0]}</th>
                                 <th scope="col">{headers[1]}</th>
-                                <th scope="col" onChange={handleProxyChange}>{headers[2]}</th></>}
+                                <th scope="col">{headers[2]}</th></>}
 
                             {cardNumber === 2 && <>
                                 <th scope="col">{headers[1]}</th>
@@ -34,7 +34,11 @@ function THINGWORX_TABLE(props) {
                     </thead>
                     <tbody>
                         <tr>
-                            {cardNumber === 1 && values.map((elements) => <td key={Math.random()}>{elements}</td>)}
+                            {cardNumber === 1 && <>
+                                <td>{values[0]}</td>
+                                <td>{values[1]}</td>
+                                <td>{values[2]}</td>
+                            </>}
                             {cardNumber === 2 && <>
                                 <td>{values[1]}</td>
                                 <td>{values[2]}</td>
@@ -58,5 +62,6 @@ THINGWORX_TABLE.defaultProps = {
     title: "Example title",
     cardNumber: 2
 }
+
 
 export default THINGWORX_TABLE

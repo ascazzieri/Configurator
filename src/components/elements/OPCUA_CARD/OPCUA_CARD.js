@@ -1,8 +1,12 @@
 import React, { useState } from 'react'
 import './OPCUA_CARD.css'
-import Checkout from '../Checkout/Checkout'
-import Form from '../Form/Form'
-import CHECKBOX_FORM from '../CHECKBOX_FORM/CHECKBOX_FORM'
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Pagenum from '../Pagenum/Pagenum'
+import { updateChannelsConfig } from '../../../config';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+
 
 
 
@@ -12,157 +16,276 @@ import CHECKBOX_FORM from '../CHECKBOX_FORM/CHECKBOX_FORM'
 
 
 const OPCUA_CARD = (props) => {
+    const { updateMethod, protocolName, toClose } = props
 
+    const [Protocol, updateProtocol] = useState(updateMethod())
+
+    const [ProgressChannel, setProgressChannel] = useState(1);
+
+
+    const [Device_ID, setDevice_ID] = useState('Suca')
+    const [OPCServerIp, setOPCServerIP] = useState('')
+    const [OPCServerPort, setOPCServerPort] = useState('')
+    const [Username, setUsername] = useState('')
+    const [Password, setPassword] = useState('')
     const [userAuth, setUserAuth] = useState(false)
-    const [encryption, setEncryption] = useState(false)
+    const [Encryption, setEncryption] = useState(false)
+    const [CertFilename, setCertFilename] = useState('')
+    const [KeyFilename, setKeyFilename] = useState('')
+    const [SamplingInterval, setSamplingInterval] = useState('')
+    const [SelectAllTagsByDefault, setSelectAllTagsByDefault] = useState(false)
+    const [TagsFilename, setTagsFilename] = useState('')
+    const [ThingName, setThingName] = useState('')
+
+
+
+    function updateDevice_ID(event) {
+        setDevice_ID(event.target.value)
+    }
+    function updateOPCServerIp(event) {
+        setOPCServerIP(event.target.value)
+    }
+    function updateOPCServerPort(event) {
+        setOPCServerPort(event.target.value);
+    }
+    function updateUsername(event) {
+        setUsername(event.target.value)
+    }
+    function updatePassword(event) {
+        setPassword(event.target.value)
+    }
+    function updateSamplingInterval(event) {
+        setSamplingInterval(event.target.value)
+    }
+    function updateTagsFilename(event) {
+        setTagsFilename(event.target.value)
+    }
+    function updateThingName(event) {
+        setThingName(event.target.value)
+    }
+    function checkAuth(event) {
+        setUserAuth(event.target.checked)
+    }
+    function checkEncryption(event) {
+        setEncryption(event.target.checked)
+    }
+    function checkSelectAllTagsByDefault(event) {
+        setSelectAllTagsByDefault(event.target.checked)
+    }
+    function updateCertFilename(event) {
+        setCertFilename(event.target.value)
+    }
+    function updateKeyFilename(event) {
+        setKeyFilename(event.target.value)
+    }
+
+
+    function handleSubmit(event) {
+        event.preventDefault();
+        let newChannel = {
+            connection_parameter: {
+                authentication: {
+                    enabled: userAuth,
+                    password: Password,
+                    username: Username
+                },
+                encryption: {
+                    enabled: Encryption,
+                    cert_filename: CertFilename,
+                    key_filename: KeyFilename
+                },
+                opc_server_ip: OPCServerIp,
+                opc_server_port: OPCServerPort
+            },
+            device_ID: Device_ID,
+            sampling_interval: SamplingInterval,
+            select_all_tags_by_default: SelectAllTagsByDefault,
+            tags_filename: TagsFilename,
+            thing_name: ThingName
+        };
+        Protocol[protocolName].channels.push(newChannel);
+        updateProtocol(Protocol);
+        updateChannelsConfig(protocolName, Protocol[protocolName].channels)
+        toClose();
+        console.log(Protocol)
+    }
+
+    function handleNextPage(event) {
+        switch (event.target.name) {
+            case 'server':
+                setProgressChannel(2);
+                break;
+            case 'authentication':
+                setProgressChannel(3);
+                break;
+            case 'tags':
+                setProgressChannel(4);
+                break;
+            case 'encryption':
+                setProgressChannel(1)
+                break;
+            default:
+                setProgressChannel(1)
+        }
+    }
+
+
 
     return (
-        <div id="login" className='box-margin'>
-            <div className="container ">
-                <div className="row justify-content-center align-items-center">
-                    <div className="col-md-6 border border-primary border-padding rounded">
-                        <div className="col-md-12">
-                            <form className="form" action="" method="post">
+        <>
+            <Pagenum
+                nPage={ProgressChannel}
+                totalPages={4}
+                key={Math.random()}
+            />
 
-                                {props.cardNumber === 1 && <>
-                                    <h3 className="text-center text-info">{props.title}</h3>
-                                    <Form
-                                        div_id="OPC.configuration.device-id.div"
-                                        input_id="OPC.configuration.deviceid"
-                                        label="Device ID"
-                                        type="text"
-                                        placeholder="Insert device ID"
-                                        hint=""
+            <div id="login" className='box-margin'>
+                <div className="container ">
+                    <div className="row justify-content-center align-items-center">
+                        <div className="col-md-6 border border-primary border-padding rounded">
+                            <div className="col-md-12">
+                                <h3 className="text-center text-info">Create Channel</h3>
+                                <Form onSubmit={handleSubmit} action="" method="post">
 
-                                    />
-                                    <Form
-                                        div_id="OPC.configuration.server-ip.div"
-                                        input_id="OPC.configuration.server-ip.div"
-                                        label="OPC server IP"
-                                        type="text"
-                                        placeholder="Insert OPC Server IP"
-                                        hint=""
+                                    {ProgressChannel === 1 && <>
+                                        <h4 className="text-center text-info">Server</h4>
+                                        <Form.Group className="mb-3"/*  controlId="formBasicEmail" */>
+                                            <Form.Label>Device ID</Form.Label>
+                                            <Form.Control onChange={updateDevice_ID} type="text" placeholder="Device ID" />
+                                        </Form.Group>
+                                        <Form.Group className="mb-3"/*  controlId="formBasicEmail" */>
+                                            <Form.Label>OPC Server IP</Form.Label>
+                                            <Form.Control onChange={updateOPCServerIp} type="text" placeholder="IP adress" defaultValue={OPCServerIp} />
+                                        </Form.Group>
+                                        <Form.Group className="mb-3"/*  controlId="formBasicEmail" */>
+                                            <Form.Label>OPC Server Port</Form.Label>
+                                            <Form.Control onChange={updateOPCServerPort} type="text" placeholder="Port number" defaultValue={OPCServerPort} />
+                                        </Form.Group>
+                                        <div className="mb-2">
+                                            <Row>
 
-                                    />
-                                    <Form
-                                        div_id="OPC.configuration.server-port.div"
-                                        input_id="OPC.configuration.server-port"
-                                        label="OPC server port"
-                                        type="text"
-                                        placeholder="Insert OPC server port number"
-                                        hint=""
+                                                <Col md={{ span: 3, offset: 9 }}>
+                                                    <Button variant="primary" size="md" name="server" onClick={handleNextPage}>
+                                                        Next
+                                                    </Button></Col>
+                                            </Row>
+                                        </div>
 
-                                    /></>}
-                                {props.cardNumber === 2 && <>
-                                    <h3 className="text-center text-info">{props.title}</h3>
-                                    {userAuth && <>
 
-                                        <Form
-                                            div_id="OPC.configuration.Username.div"
-                                            input_id="OPC.configuration.Username"
-                                            label="Username:"
-                                            type="text"
-                                            placeholder="Insert username:"
-                                            hint=""
-
-                                        />
-                                        <Form
-                                            div_id="thingworx.configuration.host.div"
-                                            input_id="thingworx.configuration.host"
-                                            label="Password:"
-                                            type="password"
-                                            placeholder="insert password"
-                                            hint=""
-
-                                        />
-
-                                    </>}
-                                    <CHECKBOX_FORM
-                                        id="OPC.configuration.userAuth"
-                                        label="User authentication"
-                                        checkbox_state={setUserAuth}
-                                    />
-                                </>}
-                                {props.cardNumber === 3 && <>
-                                    <h3 className="text-center text-info">{props.title}</h3>
-                                    <Form
-                                        div_id="OPC.configuration.sampling-interval.div"
-                                        input_id="OPC.configuration.sampling-interval"
-                                        label="Sampling interval:"
-                                        type="text"
-                                        placeholder="Insert sampling interval"
-                                        hint=""
-
-                                    />
-                                    <Form
-                                        div_id="OPC.configuration.tags-filename.div"
-                                        input_id="OPC.configuration.tags-filename"
-                                        label="Tags filename:"
-                                        type="text"
-                                        placeholder="Insert tags filename"
-                                        hint=""
-
-                                    />
-                                    <Form
-                                        div_id="OPC.configuration.thing-name.div"
-                                        input_id="OPC.configuration.thing-name"
-                                        label="Thing name:"
-                                        type="text"
-                                        placeholder="Insert Thing name"
-                                        hint=""
-
-                                    />
-                                    <CHECKBOX_FORM
-                                        id="OPC.configuration.select-all-tags-by-default"
-                                        label="Select all Tags by default"
-                                        checkbox_state={setUserAuth}
-                                    />
-                                </>
-                                }
-                                {props.cardNumber === 4 && <>
-                                    <h3 className="text-center text-info">{props.title}</h3>
-                                    {encryption && <>
-                                        <Form
-                                            div_id="OPC.configuration.cert-filename.div"
-                                            input_id="OPC.configuration.cert-filename"
-                                            label="Certification filename:"
-                                            type="text"
-                                            placeholder="Insert certification filename"
-                                            hint=""
-
-                                        />
-                                        <Form
-                                            div_id="OPC.configuration.key-filename.div"
-                                            input_id="OPC.configuration.key-filename"
-                                            label="Key filename:"
-                                            type="text"
-                                            placeholder="Insert key filename"
-                                            hint=""
-
-                                        />
                                     </>}
 
 
-                                    <CHECKBOX_FORM
-                                        id="OPC.configuration.enable-encrypt"
-                                        label="Encryption"
-                                        checkbox_state={setEncryption}
-                                    />
+
+                                    {ProgressChannel === 2 && <>
+                                        <h4 className="text-center text-info">Authentication</h4>
+                                        <Form.Group className="mb-3" /* controlId="formBasicCheckbox" */>
+                                            <Form.Check onClick={checkAuth} type="checkbox" label="Authentication" defaultChecked={userAuth} />
+                                        </Form.Group>
+                                        {userAuth && <>
+                                            <Form.Group className="mb-3" /* controlId="formBasicEmail" */>
+                                                <Form.Label>Username</Form.Label>
+                                                <Form.Control onChange={updateUsername} type="text" placeholder="Username" defaultValue={Username} />
+                                            </Form.Group>
+
+                                            <Form.Group className="mb-3" /* controlId="formBasicPassword" */>
+                                                <Form.Label>Password</Form.Label>
+                                                <Form.Control onChange={updatePassword} type="password" placeholder="Password" defaultValue={Password} />
+                                            </Form.Group>
+
+                                        </>}
+                                        <div className="mb-2">
+                                            <Row>
+
+                                                <Col md={{ span: 3, offset: 9 }}>
+                                                    <Button variant="primary" size="md" name="authentication" onClick={handleNextPage}>
+                                                        Next
+                                                    </Button></Col>
+                                            </Row>
+                                        </div>
+                                    </>}
 
 
-                                    <Checkout
-                                        text="Send configuration to Dashboard" />
-                                </>}
+
+                                    {ProgressChannel === 3 && <>
+                                        <h4 className="text-center text-info">Tags</h4>
+                                        <Form.Group className="mb-3" /* controlId="formBasicPassword" */>
+                                            <Form.Label>Sampling interval</Form.Label>
+                                            <Form.Control onChange={updateSamplingInterval} type="text" placeholder="Sampling interval" defaultValue={SamplingInterval} />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3" /* controlId="formBasicPassword" */>
+                                            <Form.Label>Tags filename</Form.Label>
+                                            <Form.Control onChange={updateTagsFilename} type="text" placeholder="Tags filename" defaultValue={TagsFilename} />
+                                        </Form.Group>
+                                        <Form.Group className="mb-3"/*  controlId="formBasicEmail" */>
+                                            <Form.Label>Thing name</Form.Label>
+                                            <Form.Control onChange={updateThingName} type="text" placeholder="Thing name" defaultValue={ThingName} />
+                                        </Form.Group>
+                                        <Form.Group className="mb-3" /* controlId="formBasicCheckbox" */>
+                                            <Form.Check onClick={checkSelectAllTagsByDefault} type="checkbox" label="Select all tags by default" defaultChecked={SelectAllTagsByDefault} />
+                                        </Form.Group>
+                                        <div className="mb-2">
+                                            <Row>
+
+                                                <Col md={{ span: 3, offset: 9 }}>
+                                                    <Button variant="primary" size="md" name="tags" onClick={handleNextPage}>
+                                                        Next
+                                                    </Button></Col>
+                                            </Row>
+                                        </div>
+                                    </>}
+
+
+
+                                    {ProgressChannel === 4 && <>
+                                        <h4 className="text-center text-info">Encryption</h4>
+
+                                        <Form.Group className="mb-3" /* controlId="formBasicCheckbox" */>
+                                            <Form.Check onClick={checkEncryption} type="checkbox" label="Encryption" defaultChecked={Encryption} />
+                                        </Form.Group>
+                                        {Encryption && <>
+
+                                            <Form.Group className="mb-3" /* controlId="formBasicEmail" */>
+                                                <Form.Label>Certification filename</Form.Label>
+                                                <Form.Control onChange={updateCertFilename} defaultValue={CertFilename} type="text" placeholder="IP adress" />
+                                            </Form.Group>
+
+                                            <Form.Group className="mb-3" /* controlId="formBasicPassword" */>
+                                                <Form.Label>Key filename</Form.Label>
+                                                <Form.Control onChange={updateKeyFilename} defaultValue={KeyFilename} type="password" placeholder="Password" />
+                                            </Form.Group>
+                                        </>}
+
+
+
+                                        <div className="mb-1">
+                                            <Row>
+                                                <Col md={{ offset: 6, span: 2 }}>
+                                                    <Button variant="primary" size="md" name="encryption" onClick={handleNextPage}>
+                                                        Next
+                                                    </Button></Col>
+                                                <Col md={{ offste: 8, span: 4 }}>
+                                                    <Button variant="success" size="md" name="encryption" type='submit'>
+                                                        Create Channel
+                                                    </Button></Col>
+                                            </Row>
+                                        </div>
+
+
+                                    </>}
 
 
 
 
-                            </form>
+
+
+                                </Form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div ></>
+
     )
 
 }

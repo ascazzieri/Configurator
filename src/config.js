@@ -3,7 +3,7 @@ let prova = {
         "host": "development.iotdataroom.com",
         "appkey": "31aa0349-6f2b-4275-ae5a-cf665ac3bf96",
         "proxy": {
-            "enabled": true,
+            "enabled": false,
             "host": "192.168.111.1",
             "port": 3128,
             "username": "paperino",
@@ -19,7 +19,7 @@ let prova = {
                         "opc_server_ip": "10.2.240.233",
                         "opc_server_port": 4840,
                         "authentication": {
-                            "enabled": false,
+                            "enabled": true,
                             "username": "admin",
                             "password": "admin"
                         },
@@ -36,7 +36,7 @@ let prova = {
                 },
 
                 {
-                    "device_ID": "Pippo2",
+                    "device_ID": "PIPPO1",
                     "connection_parameter": {
                         "opc_server_ip": "10.2.240.233",
                         "opc_server_port": 4840,
@@ -56,34 +56,13 @@ let prova = {
                     "select_all_tags_by_default": true,
                     "thing_name": "rt_PLC"
                 },
-            ]
-
-        }
-    }
-}
-
-let config = {
-    "thingworx": {
-        "host": "non aggiornato",
-        "appkey": "31aa0349-6f2b-4275-ae5a-cf665ac3bf96",
-        "proxy": {
-            "enabled": true,
-            "host": "192.168.111.1",
-            "port": 3128,
-            "username": "",
-            "password": ""
-        }
-    },
-    "protocol": {
-        "opcua": {
-            "channels": [
                 {
-                    "device_ID": "PLC",
+                    "device_ID": "PIPPO2",
                     "connection_parameter": {
                         "opc_server_ip": "10.2.240.233",
                         "opc_server_port": 4840,
                         "authentication": {
-                            "enabled": false,
+                            "enabled": true,
                             "username": "admin",
                             "password": "admin"
                         },
@@ -98,14 +77,13 @@ let config = {
                     "select_all_tags_by_default": true,
                     "thing_name": "rt_PLC"
                 },
-
                 {
-                    "device_ID": "PLC",
+                    "device_ID": "PIPPO3",
                     "connection_parameter": {
                         "opc_server_ip": "10.2.240.233",
                         "opc_server_port": 4840,
                         "authentication": {
-                            "enabled": false,
+                            "enabled": true,
                             "username": "admin",
                             "password": "admin"
                         },
@@ -126,11 +104,33 @@ let config = {
     }
 }
 
+let config = {}
 
-function get_twx_conf() {
+
+function getConfFromServer() {
+    config = JSON.parse(JSON.stringify(prova))
+    return config;
+}
+getConfFromServer();
+
+function updateThingworxConfig(newThingworxConfig) {
+    config.thingworx = newThingworxConfig;
+    console.log(config.thingworx);
+    return config.thingworx
+}
+
+function updateChannelsConfig(protocolName, newChannelsConfig) {
+    config.protocol[protocolName].channels = newChannelsConfig;
+    console.log(config.protocol[protocolName].channels)
+    return config.protocol[protocolName].channels
+    /*Send config to server */
+}
+
+
+function getThingworxConf() {
     /*   get_xhr("get_twx_conf()", "/conf/thingworx", get_twx_conf_hanlder) */
 
-    get_twx_conf_hanlder('')
+    /*  get_twx_conf_hanlder('') */
     return config.thingworx
 
 }
@@ -138,8 +138,8 @@ function get_twx_conf() {
 function get_twx_conf_hanlder(text) {
     try {
         /*  let twx_conf = JSON.parse(text) */
-        let twx_conf = prova.thingworx
-        config.thingworx = twx_conf
+        config.thingworx = JSON.parse(JSON.stringify(prova.thingworx))
+
 
     } catch (e) {
         console.error(e.message)
@@ -150,19 +150,18 @@ function get_twx_conf_hanlder(text) {
 
 }
 
-function get_opc_conf() {
-    /* get_xhr("get_opc_conf()", "/conf/opcua", get_opc_conf_handler) */
-
-    get_opc_conf_handler('')
-    return config.protocol
+const getProtocolConf = () => {
+    /*   get_opc_conf_handler(''); */
+    return config.protocol;
 }
+
 
 function get_opc_conf_handler(text) {
     try {
 
         /* let opc_conf = JSON.parse(text) */
-        let protocol_conf = prova.protocol
-        config.protocol = protocol_conf
+        config.protocol = JSON.parse(JSON.stringify(prova.protocol))
+
 
 
 
@@ -175,8 +174,5 @@ function get_opc_conf_handler(text) {
 
 }
 
-let thingworx = config.thingworx;
-let protocol = config.protocol;
 
-
-export { thingworx, protocol, get_twx_conf, get_opc_conf }
+export {getThingworxConf, getProtocolConf, updateThingworxConfig, updateChannelsConfig, getConfFromServer }

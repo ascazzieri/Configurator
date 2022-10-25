@@ -2,21 +2,16 @@ import React, { useState } from 'react'
 import './THINGWORX_DASHBOARD.css'
 import THINGWORX_TABLE from '../elements/THINGWORX_TABLE/THINGWORX_TABLE'
 import Pagenum from '../elements/Pagenum/Pagenum'
-import thingworx from './thingworx_datas'
 import Refreshconf from '../elements/Refreshconf/Refreshconf'
-import { get_twx_conf } from '../../config'
-
-
-/* console.log(proxy_values) */
-/* console.log(proxy_headers);
-console.log(proxy_values) */
+import { getThingworxConf } from '../../config'
 
 
 const THINGWORX_DASHBOARD = (props) => {
 
 
-    const [Thingworx, updateThingworx] = useState(thingworx)
-  
+    const [Thingworx, updateThingworx] = useState(getThingworxConf())
+    const [isProxy, setIsProxy] = useState(false)
+
 
 
     let TW_headers = [];
@@ -50,13 +45,11 @@ const THINGWORX_DASHBOARD = (props) => {
     }
 
 
-    const [isProxy, setIsProxy] = useState(proxy_values[0])
-
-
-
-
-
-
+    /* const [isProxy, setIsProxy] = useState(TW_values[2]) */
+   /*  useEffect(() => {
+        updateThingworx(get_twx_conf)
+        setIsProxy(Thingworx.proxy.enabled)
+    }) */
 
     return (
         <>
@@ -76,8 +69,8 @@ const THINGWORX_DASHBOARD = (props) => {
                             <THINGWORX_TABLE
                                 headers={TW_headers}
                                 values={TW_values}
-                                onProxyChange={setIsProxy}
                                 cardNumber={1}
+                                /*   checkProxy={setIsProxy} */
                                 title="Thingworx"
                                 table_style="table table-secondary table-bordered table-sm"
                             />
@@ -103,6 +96,14 @@ const THINGWORX_DASHBOARD = (props) => {
 
 
                     </div>
+                    <Refreshconf
+                        text="Refresh TW configuration"
+                        updateComponent={updateThingworx}
+                        toUpdate={getThingworxConf}
+                    /*    checkProxy={setIsProxy}
+                       proxyBoolean={TW_values[2]} */
+
+                    />
                     {isProxy && <>
                         <a className="carousel-control-prev" href="#carouselTWDash" role="button" data-slide="prev">
                             <span className="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -117,13 +118,8 @@ const THINGWORX_DASHBOARD = (props) => {
                 </div>
 
             </div>
-            <Refreshconf
-                text="Refresh TW configuration"
-                ClickToRefresh={get_twx_conf}
-                updateComponent={updateThingworx}
-                toUpdate={get_twx_conf}
 
-            />
+            {/*         {console.log(TW_values[2])} */}
 
 
 
