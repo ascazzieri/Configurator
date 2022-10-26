@@ -2,6 +2,7 @@ import React, { Component, useState } from 'react'
 import './Body.css'
 import THINGWORX_CARD from '../elements/THINGWORX_CARD/THINGWORX_CARD'
 import Dashboard from '../Dashboard/Dashboard'
+
 import Navbar from '../elements/Navbar/Navbar'
 import OPCUA_CHANNELS_SELECTION from '../OPCUA_CHANNELS_SELECTION/OPCUA_CHANNELS_SELECTION'
 import { getThingworxConf } from '../../config'

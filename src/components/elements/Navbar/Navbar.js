@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import './Navbar.css'
+import Button from 'react-bootstrap/Button';
 import Infocanva from '../Infocanva/Infocanva'
-import Sendconf from '../Sendconf/Sendconf'
+import {downloadConfig} from '../../../config'
 import DateTime from '../DateTime/DateTime'
 
 
@@ -79,9 +80,9 @@ function Navbar(props) {
     return (
         <>
             <Infocanva
-            show={show}
-            handleShow={handleShow}
-            handleClose={handleClose} />
+                show={show}
+                handleShow={handleShow}
+                handleClose={handleClose} />
             <nav className="navbar navbar-expand-md navbar-dark bg-dark">
 
                 <a className="navbar-brand brand-color" onClick={handleShow}><img className='navbar-brand-logo' src="./imgs/applied_logo_icon-50x50.png" width="30" height="30" alt="applied-logo" />Configurator</a>
@@ -119,9 +120,7 @@ function Navbar(props) {
                     </div>
 
                     <DateTime />
-                    <Sendconf
-                        text="Send Configuration"
-                    />
+                    <Button onClick={downloadConfig} variant="outline-primary">Download Configuration </Button>
 
                 </div>
 

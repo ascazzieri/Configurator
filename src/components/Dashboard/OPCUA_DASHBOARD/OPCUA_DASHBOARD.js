@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import './OPCUA_DASHBOARD.css'
-import PROTOCOL_TABLE from '../elements/PROTOCOL_TABLE/PROTOCOL_TABLE'
-import Pagenum from '../elements/Pagenum/Pagenum'
-import Refreshconf from '../elements/Refreshconf/Refreshconf'
+import PROTOCOL_TABLE from '../Tables/PROTOCOL_TABLE/PROTOCOL_TABLE'
+import Pagenum from '../../elements/Pagenum/Pagenum'
+import Refreshconf from '../../elements/Refreshconf/Refreshconf'
 /* import { protocol, channels, server_headers, server_values, users_headers, users_values, tags_headers, tags_values, encryption_headers, encryption_values } from './opcua_datas' */
-import { getProtocolConf } from '../../config'
+import { getProtocolConf } from '../../../config'
 
 
 const OPCUA_DASHBOARD = () => {

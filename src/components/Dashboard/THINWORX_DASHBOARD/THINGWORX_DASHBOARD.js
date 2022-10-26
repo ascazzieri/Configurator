@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
 import './THINGWORX_DASHBOARD.css'
-import THINGWORX_TABLE from '../elements/THINGWORX_TABLE/THINGWORX_TABLE'
-import Pagenum from '../elements/Pagenum/Pagenum'
-import Refreshconf from '../elements/Refreshconf/Refreshconf'
-import { getThingworxConf } from '../../config'
+import THINGWORX_TABLE from '../Tables/THINGWORX_TABLE/THINGWORX_TABLE'
+import Pagenum from '../../elements/Pagenum/Pagenum'
+import Refreshconf from '../../elements/Refreshconf/Refreshconf'
+import { getThingworxConf } from '../../../config'
 
 
 const THINGWORX_DASHBOARD = (props) => {
 
 
     const [Thingworx, updateThingworx] = useState(getThingworxConf())
-    const [isProxy, setIsProxy] = useState(false)
+    const [isProxy, setIsProxy] = useState(Thingworx.proxy.enabled)
 
 
 
@@ -44,12 +44,9 @@ const THINGWORX_DASHBOARD = (props) => {
         TW_values[2] = 'false';
     }
 
-
-    /* const [isProxy, setIsProxy] = useState(TW_values[2]) */
-   /*  useEffect(() => {
-        updateThingworx(get_twx_conf)
-        setIsProxy(Thingworx.proxy.enabled)
-    }) */
+    function handleProxy(event){
+        console.log(event)
+    }
 
     return (
         <>

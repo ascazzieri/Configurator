@@ -1,4 +1,4 @@
-import { protocol } from '../../config'
+import { protocol } from '../../../config'
 
 let { channels } = protocol.opcua;
 
