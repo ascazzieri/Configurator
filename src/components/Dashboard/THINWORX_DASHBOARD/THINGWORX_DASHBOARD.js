@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './THINGWORX_DASHBOARD.css'
 import THINGWORX_TABLE from '../Tables/THINGWORX_TABLE/THINGWORX_TABLE'
 import Pagenum from '../../elements/Pagenum/Pagenum'
@@ -11,6 +11,11 @@ const THINGWORX_DASHBOARD = (props) => {
 
     const [Thingworx, updateThingworx] = useState(getThingworxConf())
     const [isProxy, setIsProxy] = useState(Thingworx.proxy.enabled)
+
+
+    useEffect(() => {
+        setIsProxy(Thingworx.proxy.enabled)
+    },[Thingworx.proxy.enabled] )
 
 
 
@@ -43,11 +48,6 @@ const THINGWORX_DASHBOARD = (props) => {
     } else if (proxy_values[0] === false) {
         TW_values[2] = 'false';
     }
-
-    function handleProxy(event){
-        console.log(event)
-    }
-
     return (
         <>
             <div className='container-fluid tw-dashboard'>
@@ -67,7 +67,7 @@ const THINGWORX_DASHBOARD = (props) => {
                                 headers={TW_headers}
                                 values={TW_values}
                                 cardNumber={1}
-                                /*   checkProxy={setIsProxy} */
+  
                                 title="Thingworx"
                                 table_style="table table-secondary table-bordered table-sm"
                             />
@@ -97,8 +97,6 @@ const THINGWORX_DASHBOARD = (props) => {
                         text="Refresh TW configuration"
                         updateComponent={updateThingworx}
                         toUpdate={getThingworxConf}
-                    /*    checkProxy={setIsProxy}
-                       proxyBoolean={TW_values[2]} */
 
                     />
                     {isProxy && <>

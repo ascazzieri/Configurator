@@ -4,12 +4,15 @@ import './Dashboard.css';
 import { AiOutlineRight } from 'react-icons/ai'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Networkparameters from './Networkparameters/Networkparameters'
+import Connectionstatus from './Connectionstatus/Connectionstatus'
 import THINGWORX_DASHBOARD from './THINWORX_DASHBOARD/THINGWORX_DASHBOARD';
 import OPCUA_DASHBOARD from './OPCUA_DASHBOARD/OPCUA_DASHBOARD'
+import SITEMANAGER from './Sitemanager/Sitemanager'
 import { getProtocolConf } from '../../config'
 const { Header, Content, Footer, Sider } = Layout;
 
-const Dashboard = () => {
+const Dashboard = (props) => {
 
     const [Protocol, updateProtocol] = useState(getProtocolConf())
     useEffect(() => {
@@ -18,8 +21,12 @@ const Dashboard = () => {
 
 
     const [Home, setHome] = useState(true)
+    const [Network, setNetwork] = useState(false)
     const [ConnectionStatus, setConnectionStatus] = useState(false)
     const [Tables, setTables] = useState(false)
+    const [Sitemanager, setSitemanager] = useState(false)
+    const [updateEffect, setUpdateEffect] = useState()
+
     let [currentPage, setCurrentPage] = useState('Home')
 
 
@@ -27,20 +34,42 @@ const Dashboard = () => {
         switch (page) {
             case 'Home':
                 setHome(true);
+                setNetwork(false)
                 setConnectionStatus(false)
                 setTables(false)
+                setSitemanager(false)
                 break;
-            case 'Connection Status':
-                setConnectionStatus(true);
-                setHome(false)
+            case 'Network':
+                setHome(false);
+                setNetwork(true)
+                setConnectionStatus(false)
                 setTables(false)
+                setSitemanager(false)
+                break;
+
+            case 'Connection Status':
+                setHome(false);
+                setNetwork(false)
+                setConnectionStatus(true)
+                setTables(false)
+                setSitemanager(false)
                 break;
             case 'Tables':
-                setTables(true);
-                setHome(false)
+                setHome(false);
+                setNetwork(false)
                 setConnectionStatus(false)
+                setTables(true)
+                setSitemanager(false)
+                break;
+            case 'Sitemanager':
+                setHome(false);
+                setNetwork(false)
+                setConnectionStatus(false)
+                setTables(false)
+                setSitemanager(true)
                 break;
             default:
+                setNetwork(false)
                 setHome(true);
                 setConnectionStatus(false)
                 setTables(false)
@@ -52,6 +81,11 @@ const Dashboard = () => {
 
 
     }
+
+    const sendAlertToDashboard = (alert) => {
+        props.sendError(alert)
+    }
+
     return (
         <Layout
             style={{
@@ -86,7 +120,7 @@ const Dashboard = () => {
                     theme="light"
                     mode="inline"
                     defaultSelectedKeys={['1']}
-                    items={['Home', 'Connection Status', 'Tables', 'Other Stuff', 'Other Stuff', 'Other Stuff', 'Other Stuff'].map(
+                    items={['Home', 'Network', 'Connection Status', 'Tables', 'Sitemanager', 'Other Stuff', 'Other Stuff', 'Other Stuff'].map(
                         (item, index) => ({
                             key: String(index + 1),
                             icon: React.createElement(AiOutlineRight),
@@ -106,7 +140,7 @@ const Dashboard = () => {
                     }}
                 > <Row className="justify-content-md-center">
 
-                        <Col md="auto"><h3>{currentPage}</h3></Col>
+                        <Col md="auto"><h3 className="text-center text-primary">{currentPage}</h3></Col>
 
                     </Row></Header>
                 <Content
@@ -122,15 +156,19 @@ const Dashboard = () => {
                         }}
                     >
                         {Home && <div>Home</div>}
-                        {ConnectionStatus && <div>Connection Status</div>}
+                        {Network && <Networkparameters sendError={sendAlertToDashboard} />}
+                        {ConnectionStatus && <Connectionstatus
+                            sendError={sendAlertToDashboard}
+                        />}
                         {Tables && <><THINGWORX_DASHBOARD />
                             {Object.keys(Protocol).map((protocol, index) => <div key={protocol}>
                                 {
-                                    protocol === 'opcua' && <OPCUA_DASHBOARD
-                                    />}
-                                {protocol === 'modbus' && <div>Modbus Table</div>}
+                                    protocol === 'opcua' && Protocol.opcua !== undefined ? <OPCUA_DASHBOARD
+                                    /> : null}
+                                {protocol === 'modbus' && Protocol.modbus !== undefined ? <div>Modbus Table</div> : null}
                             </div>
                             )}</>}
+                        {Sitemanager && <SITEMANAGER sendError={sendAlertToDashboard} />}
 
                     </div>
                 </Content>

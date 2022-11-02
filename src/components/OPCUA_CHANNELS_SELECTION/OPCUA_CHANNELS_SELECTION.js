@@ -51,7 +51,7 @@ function OPCUA_CHANNELS_SELECTION() {
             {channelPanel === true && createNewChannel === false && <div className='container-fluid channels-wrapper'>
                 <Row className="justify-content-md-center">
 
-                    <Col md="auto"><h3>OPCUA Channels</h3></Col>
+                    <Col md="auto"><h3 className="text-center text-primary">OPCUA Channels</h3></Col>
 
                 </Row>
 

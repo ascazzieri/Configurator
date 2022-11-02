@@ -46,7 +46,6 @@ function Channelstabs(props) {
     function refreshChannelTabs(refreshedProtocol) {
         let newProtocol = getProtocolConf();
         const newChannelList = newProtocol[protocolName].channels;
-        console.log(newChannelList)
         updateChannelList(newChannelList);
         updateProtocol(newProtocol)
     }

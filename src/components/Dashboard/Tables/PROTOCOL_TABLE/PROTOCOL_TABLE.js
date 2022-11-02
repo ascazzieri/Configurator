@@ -46,42 +46,6 @@ const PROTOCOL_TABLE = (props) => {
 
         </div >
     )
-
-
-    /*  
-    
-    let valueIndex = -1;
-    <table className={props.table_style}>
-                 <thead className='thead-dark'>
-                     <tr>
-                         {props.table_headers.map(item => <th key={item} scope="col">{item}</th>)}
- 
-                     </tr>
-                 </thead>
-                 <tbody>
-                     {props.table_rows.map(item => {
-                         valueIndex++;
- 
-                         return (
- 
-                             <tr key={item}>
-                                
-                                 {props.table_values.map(values  => <td  key={values}>{values[valueIndex]}</td>)}
-                             </tr>
- 
-                         )
- 
- 
-                     }
-                     )
- 
- 
-                     }
- 
- 
-                 </tbody>
-             </table>
-  */
 }
 
 PROTOCOL_TABLE.defaultProps = {

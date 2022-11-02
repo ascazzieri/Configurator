@@ -144,7 +144,7 @@ const OPCUA_CARD = (props) => {
                     <div className="row justify-content-center align-items-center">
                         <div className="col-md-6 border border-primary border-padding rounded">
                             <div className="col-md-12">
-                                <h3 className="text-center text-info">Create Channel</h3>
+                                <h3 className="text-center text-primary">Create Channel</h3>
                                 <Form onSubmit={handleSubmit} action="" method="post">
 
                                     {ProgressChannel === 1 && <>

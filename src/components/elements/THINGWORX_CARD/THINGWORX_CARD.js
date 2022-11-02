@@ -100,7 +100,7 @@ const THINGWORX_CARD = (props) => {
             />
             <Row className="justify-content-md-center">
 
-                <Col md="auto"><h3>Machine to Cloud</h3></Col>
+                <Col md="auto"><h3 className="text-center text-primary">Machine to Cloud</h3></Col>
 
             </Row>
             <div className='box-margin'>
