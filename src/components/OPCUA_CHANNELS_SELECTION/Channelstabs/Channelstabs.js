@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import './Channeltabs.css'
-import Refreshconf from '../Refreshconf/Refreshconf';
+import Refreshconf from '../../elements/Refreshconf/Refreshconf';
 import Col from 'react-bootstrap/Col';
 import Nav from 'react-bootstrap/Nav';
 import Row from 'react-bootstrap/Row';
@@ -15,7 +15,7 @@ function Channelstabs(props) {
 
     let noChannels = false;
 
-    const { protocolName, toggleModifyPanel } = props
+    const { protocolName, toggleModifyPanel, toggleBrowsePanel } = props
     const [Protocol, updateProtocol] = useState(getProtocolConf())
 
 
@@ -35,6 +35,10 @@ function Channelstabs(props) {
 
     function modifyChannel(id) {
         toggleModifyPanel(id)
+    }
+    function browseTags(id) {
+        toggleBrowsePanel(id)
+
     }
 
     function deleteChannel(id) {
@@ -80,7 +84,7 @@ function Channelstabs(props) {
                                             <button key={Math.random()} type="button" className="btn btn-outline-danger" onClick={() => deleteChannel(item.device_ID)}>Delete</button>
                                         </div>
                                         <div key={Math.random()} className="col">
-                                            <button key={Math.random()} type="button" className="btn btn-outline-dark">Browse Tags</button>
+                                            <button key={Math.random()} type="button" className="btn btn-outline-dark" onClick={() => browseTags(item.device_ID)}>Browse Tags</button>
                                         </div>
 
                                     </div>

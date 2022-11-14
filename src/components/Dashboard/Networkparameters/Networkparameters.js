@@ -1,8 +1,13 @@
-import { Checkbox, Form, Input, Select } from 'antd';
-import React, { useState, useReducer, createContext, useEffect } from 'react';
+import { Checkbox, Form, Input, Select, Space, Badge } from 'antd';
+import React, { useState, useReducer, useEffect } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import { BiWifi, BiWifiOff } from "react-icons/bi";
+import WifiTable from './WifiTable/WifiTable'
+import { checkAerial } from '../../../wifi-networks'
+import { getNetworkConf, updateNetworkConfig } from '../../../config'
+
 
 const { Option } = Select;
 
@@ -18,29 +23,66 @@ const errorReducer = (state, action) => {
 
 const Networkparameters = (props) => {
 
+    const [Network, setNetwork] = useState(getNetworkConf())
 
 
-    const [IPConfig, setIPConfig] = useState('Static')
-    const [Connection, setConnection] = useState('Ethernet')
+    const [IPConfig, setIPConfig] = useState(Network.dhcp === true ? 'dhcp' : 'static')
+    const [IPMask, setIPMask] = useState(Network.static.ip)
+    const [DefaultGTW, setDefaultGTW] = useState(Network.static.gateway)
+    const [DNSServer, setDNSServer] = useState(Network.static.dns)
+    const [Connection, setConnection] = useState(Network.if_wan_medium)
+    const [Wifi, setWifi] = useState(Network.wireless)
+    const [isAerial, setIsAerial] = useState(checkAerial())
     const [writeData, setWriteData] = useState(false)
     const [NetworkError, dispatchNetworError] = useReducer(errorReducer, { alertMsg: '', isAlert: false, alertType: '' })
+
+
     const [buttonClicked, setbuttonClicked] = useState(false)
+
+
 
     useEffect(() => {
         if (NetworkError.isAlert === true) {
             props.sendError(NetworkError)
         }
+
     }, [buttonClicked])
 
 
+
+
+
+    const handleSubmit = () => {
+        let newNetwork = {
+            "routes": {},
+            "net_scan": [],
+            'dhcp': IPConfig === 'dhcp' ? true : false,
+            'static': {
+                ip: IPMask,
+                dns: DNSServer,
+                gateway: DefaultGTW,
+            },
+            'if_wan_medium': Connection,
+            "ntp": [],
+            "nat": true,
+            "machine_to_internet": true,
+            "wireless": Wifi
+
+
+        };
+        setNetwork(newNetwork)
+        updateNetworkConfig(newNetwork)
+    }
 
     const onFinish = (values) => {
         if (writeData === false) {
             dispatchNetworError({ type: 'ALERT_ERROR' })
             setbuttonClicked(!buttonClicked);
+
             return;
         } else {
             dispatchNetworError({})
+            handleSubmit();
         }
         console.log('Success:', values);
     };
@@ -50,19 +92,25 @@ const Networkparameters = (props) => {
     const onIPConfigChange = (value) => {
         switch (value) {
             case 'static':
-                setIPConfig('Static')
+                setIPConfig('static')
                 return;
             case 'dhcp':
-                setIPConfig('DHCP')
+                setIPConfig('dhcp')
                 return;
             default:
                 console.log('Unknown input')
         }
     };
+    const onDeafultGTWChange = (value) => {
+        setDefaultGTW(value.target.value)
+    }
+    const onDNSServerChange = (value) => {
+        setDNSServer(value.target.value)
+    }
     const onConnectionChange = (value) => {
         switch (value) {
             case 'ethernet':
-                setConnection('Ethernet')
+                setConnection('thernet')
                 return;
             case 'wireless':
                 setConnection('Wireless')
@@ -70,6 +118,11 @@ const Networkparameters = (props) => {
             default:
                 console.log('Unknown input')
         }
+        setInterval(setIsAerial(checkAerial()), 10000)
+    }
+    const onIPMaskChange = (value) => {
+        console.log(value.target.value)
+        setIPMask(value)
     }
 
     const handleWriteData = (value) => {
@@ -92,6 +145,7 @@ const Networkparameters = (props) => {
                 <Form.Item
                     name="IP Configuration"
                     label="IP Configuration"
+                    initialValue={IPConfig}
                     rules={[
                         {
                             required: true,
@@ -103,12 +157,12 @@ const Networkparameters = (props) => {
                         onChange={onIPConfigChange}
                         allowClear
                     >
-                        <Option value="static">Static</Option>
-                        <Option value="dhcp">DHCP</Option>
+                        <Option value="static" label="static">Static</Option>
+                        <Option value="dhcp" label="dhcp">DHCP</Option>
 
                     </Select>
                 </Form.Item>
-                {IPConfig === 'Static' && <Form.Item
+                {IPConfig === 'static' && <Form.Item
 
                     label="IP/MASK"
                     name="IP/MASK"
@@ -118,8 +172,10 @@ const Networkparameters = (props) => {
                             message: 'Please input IP address!',
                         },
                     ]}
+                    initialValue={IPMask}
+
                 >
-                    <Input placeholder="Separate different IPs with commas. Example: 192.168.1.1/24,10.10.1.1/24." />
+                    <Input allowClear onChange={onIPMaskChange} placeholder="Separate different IPs with commas. Example: 192.168.1.1/24,10.10.1.1/24." />
                 </Form.Item>}
 
 
@@ -131,8 +187,9 @@ const Networkparameters = (props) => {
                             required: false,
                         },
                     ]}
+                    initialValue={DefaultGTW}
                 >
-                    <Input />
+                    <Input onChange={onDeafultGTWChange} placeholder='Insert IPs separated by commas.' />
                 </Form.Item>
                 <Form.Item
                     label="DNS Server"
@@ -142,12 +199,14 @@ const Networkparameters = (props) => {
                             required: false,
                         },
                     ]}
+                    initialValue={DNSServer.toString()}
                 >
-                    <Input placeholder='Insert IPs separated by commas.' />
+                    <Input onChange={onDNSServerChange} placeholder='Insert IPs separated by commas.' />
                 </Form.Item>
                 <Form.Item
                     name="Connection"
                     label="Connection"
+                    initialValue={Connection}
                     rules={[
                         {
                             required: true,
@@ -155,21 +214,42 @@ const Networkparameters = (props) => {
                     ]}
                 >
                     <Select
-                        placeholder="Select an option between Static and DHCP."
+                        placeholder="Select an option between Ethernet and Wireless."
                         onChange={onConnectionChange}
                         allowClear
                     >
                         <Option value="ethernet">Ethernet</Option>
-                        <Option value="wireless">Wireless</Option>
+                        <Option value="wireless">Wireless</Option> */
 
                     </Select>
                 </Form.Item>
+
                 {Connection === 'Wireless' && <>
-                <div>Wifi Tables</div></>}
+
+                    <div className="mb-2">
+                        <Row>
+                            <Col md={{ offset: 9, span: 5 }}>
+                                <Space>
+
+                                    <Badge className="site-badge-count-109" count={isAerial === false ? <div style={{ color: '#f5222d' }}><BiWifiOff /> Aerial NOT Connected</div> : 0} />
+                                    <Badge className="site-badge-count-109" count={isAerial === true ? <div style={{ color: '#52c41a' }} ><BiWifi />Aerial Connected</div> : 0} />
+
+                                </Space></Col>
+
+                        </Row>
+                    </div>
+                    {isAerial && <WifiTable
+                        Wifi={Wifi}
+                        returnWifi={setWifi} />}
+
+
+
+                </>}
+                <hr />
 
 
                 <Form.Item
-                    name="Enable writing network data on device"
+                    name="Enable writing data on device"
                     valuePropName="checked"
                     wrapperCol={{
                         offset: 1,
@@ -184,6 +264,7 @@ const Networkparameters = (props) => {
                 >
                     <Checkbox defaultChecked={writeData} onChange={handleWriteData}>Enable writing network data on device</Checkbox>
                 </Form.Item>
+
 
                 <Form.Item
                     wrapperCol={{
@@ -205,4 +286,6 @@ const Networkparameters = (props) => {
 
     );
 };
+
+
 export default Networkparameters;

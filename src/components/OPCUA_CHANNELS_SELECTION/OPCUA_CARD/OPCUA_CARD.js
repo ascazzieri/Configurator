@@ -2,17 +2,11 @@ import React, { useState } from 'react'
 import './OPCUA_CARD.css'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import Pagenum from '../Pagenum/Pagenum'
+import Pagenum from '../../elements/Pagenum/Pagenum'
 import { updateChannelsConfig } from '../../../config';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-
-
-
-
-
-
-
+import Alertlist from '../../elements/Alertlist/Alertlist'
 
 
 const OPCUA_CARD = (props) => {
@@ -22,8 +16,12 @@ const OPCUA_CARD = (props) => {
 
     const [ProgressChannel, setProgressChannel] = useState(1);
 
+    const [AlertPopup, setAlertPopup] = useState({ alertMsg: '', isAlert: false, alertType: '' })
 
-    const [Device_ID, setDevice_ID] = useState('Suca')
+
+
+
+    const [Device_ID, setDevice_ID] = useState('')
     const [OPCServerIp, setOPCServerIP] = useState('')
     const [OPCServerPort, setOPCServerPort] = useState('')
     const [Username, setUsername] = useState('')
@@ -36,6 +34,7 @@ const OPCUA_CARD = (props) => {
     const [SelectAllTagsByDefault, setSelectAllTagsByDefault] = useState(false)
     const [TagsFilename, setTagsFilename] = useState('')
     const [ThingName, setThingName] = useState('')
+
 
 
 
@@ -79,36 +78,47 @@ const OPCUA_CARD = (props) => {
         setKeyFilename(event.target.value)
     }
 
-
+    const setToFalse = () => {
+        setAlertPopup({ alertMsg: '', isAlert: false, alertType: '' })
+    }
     function handleSubmit(event) {
         event.preventDefault();
-        let newChannel = {
-            connection_parameter: {
-                authentication: {
-                    enabled: userAuth,
-                    password: Password,
-                    username: Username
+        if (Device_ID === '') {
+
+            setAlertPopup({ alertMsg: 'Chosing a Device ID is mandatory in order to create a new channel', isAlert: true, alertType: 'error' })
+
+        } else {
+            let newChannel = {
+                connection_parameter: {
+                    authentication: {
+                        enabled: userAuth,
+                        password: Password,
+                        username: Username
+                    },
+                    encryption: {
+                        enabled: Encryption,
+                        cert_filename: CertFilename,
+                        key_filename: KeyFilename
+                    },
+                    opc_server_ip: OPCServerIp,
+                    opc_server_port: OPCServerPort
                 },
-                encryption: {
-                    enabled: Encryption,
-                    cert_filename: CertFilename,
-                    key_filename: KeyFilename
-                },
-                opc_server_ip: OPCServerIp,
-                opc_server_port: OPCServerPort
-            },
-            device_ID: Device_ID,
-            sampling_interval: SamplingInterval,
-            select_all_tags_by_default: SelectAllTagsByDefault,
-            tags_filename: TagsFilename,
-            thing_name: ThingName
-        };
-        Protocol[protocolName].channels.push(newChannel);
-        updateProtocol(Protocol);
-        updateChannelsConfig(protocolName, Protocol[protocolName].channels)
-        toClose();
-        console.log(Protocol)
+                device_ID: Device_ID,
+                sampling_interval: SamplingInterval,
+                select_all_tags_by_default: SelectAllTagsByDefault,
+                tags_filename: TagsFilename,
+                thing_name: ThingName
+            };
+            Protocol[protocolName].channels.push(newChannel);
+            updateProtocol(Protocol);
+            updateChannelsConfig(protocolName, Protocol[protocolName].channels)
+            toClose();
+
+
+        }
+
     }
+
 
     function handleNextPage(event) {
         switch (event.target.name) {
@@ -133,6 +143,11 @@ const OPCUA_CARD = (props) => {
 
     return (
         <>
+            {AlertPopup.isAlert && <Alertlist
+                message={AlertPopup.alertType.toUpperCase()}
+                description={AlertPopup.alertMsg}
+                type={AlertPopup.alertType}
+                setToFalse={setToFalse} />}
             <Pagenum
                 nPage={ProgressChannel}
                 totalPages={4}

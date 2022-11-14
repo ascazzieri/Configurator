@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import './OPCUA_CHANNELS_SELECTION.css'
-import OPCUA_CARD from '../elements/OPCUA_CARD/OPCUA_CARD'
-import Channelstabs from '../elements/Channelstabs/Channelstabs'
+import OPCUA_CARD from './OPCUA_CARD/OPCUA_CARD'
+import Channelstabs from './Channelstabs/Channelstabs'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import { HiOutlinePlus } from 'react-icons/hi'
+import { GoDiffAdded } from 'react-icons/go'
 import { getProtocolConf } from '../../config'
-import Channelcanva from '../elements/Channelcanva/Channelcanva';
+import Channelcanva from './Channelcanva/Channelcanva'
+import BrowseTags from './BrowseTags/BrowseTags'
 
 
 
@@ -18,8 +19,14 @@ function OPCUA_CHANNELS_SELECTION() {
 
     const [show, setShow] = useState(false);
     const [selectedChannelModify, setSelectedChannelModify] = useState("");
-    const [channelPanel, setChannelPanel] = useState(true)
     const [modifyPanel, setModifyPanel] = useState(false)
+
+    const [showBrowse, setShowBrowse] = useState(false);
+    const [selectedChannelBrowse, setSelectedChannelBrowse] = useState("");
+    const [browsePanel, setBrowsePanel] = useState(false)
+
+
+    const [channelPanel, setChannelPanel] = useState(true)
     const [createNewChannel, setCreateNewChannel] = useState(false)
 
     const handleClose = () => {
@@ -31,6 +38,18 @@ function OPCUA_CHANNELS_SELECTION() {
         setSelectedChannelModify(id)
         setModifyPanel(true)
     }
+
+
+    const handleBrowseClose = () => {
+        setShowBrowse(false);
+        setBrowsePanel(false);
+    }
+    const handleBrowseShow = (id) => {   
+        setShowBrowse(true);
+        setSelectedChannelBrowse(id)
+        setBrowsePanel(true)
+    }
+
     const handleCreateNewChannel = () => {
         setCreateNewChannel(true);
         setChannelPanel(false)
@@ -40,10 +59,6 @@ function OPCUA_CHANNELS_SELECTION() {
         setCreateNewChannel(false);
         setChannelPanel(true)
     }
-
-
-
-
 
 
     return (
@@ -60,8 +75,8 @@ function OPCUA_CHANNELS_SELECTION() {
                     <Row>
 
                         <Col md={{ span: 3, offset: 9 }}>
-                            <Button variant="primary" size="sm" onClick={handleCreateNewChannel}>
-                                Create new channel <HiOutlinePlus />
+                            <Button variant="primary" onClick={handleCreateNewChannel}>
+                                Create new channel <GoDiffAdded />
                             </Button></Col>
                     </Row>
 
@@ -72,8 +87,7 @@ function OPCUA_CHANNELS_SELECTION() {
                         protocolName="opcua"
                         updateMethod={getProtocolConf}
                         toggleModifyPanel={handleShow}
-
-
+                        toggleBrowsePanel={handleBrowseShow}
 
                     />
                 </div>
@@ -88,6 +102,13 @@ function OPCUA_CHANNELS_SELECTION() {
                 handleShow={handleShow}
                 handleClose={handleClose}
                 selectedChannelID={selectedChannelModify}
+                updateMethod={getProtocolConf}
+                protocolName="opcua" />}
+            {browsePanel && <BrowseTags
+                show={showBrowse}
+                handleShow={handleBrowseShow}
+                handleClose={handleBrowseClose}
+                selectedChannelID={selectedChannelBrowse}
                 updateMethod={getProtocolConf}
                 protocolName="opcua" />}
 

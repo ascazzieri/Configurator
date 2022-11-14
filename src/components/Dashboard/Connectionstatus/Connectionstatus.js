@@ -99,6 +99,7 @@ const Connectionstatus = (props) => {
                     </Card>
                 </Col> */}
             </Row>
+            
 
             <div className="mb-3">
                 <Row>

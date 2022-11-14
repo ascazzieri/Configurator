@@ -3,8 +3,10 @@ import React, { useState, useReducer, useEffect } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import { getSitemanagerConf, updateSitemanagerConfig, updateSitemanagerAgentsConfig } from '../../../config';
+import AgentsCanva from './AgentsCanva/AgentsCanva';
+import NotificationPopUp from '../../elements/NotificationPopUp/NotificationPopUp'
 
-const { Option } = Select;
 
 const errorReducer = (state, action) => {
     if (action.type === 'ALERT_ERROR') {
@@ -18,54 +20,64 @@ const errorReducer = (state, action) => {
 
 const Sitemanager = (props) => {
 
+    const [Sitemanager, setSitemanager] = useState(getSitemanagerConf())
 
-
-    const [IPConfig, setIPConfig] = useState('Static')
+    const [Domain, setDomain] = useState(Sitemanager.domain)
+    const [Server, setServer] = useState(Sitemanager.server)
+    const [SMENameAsHostname, setSMENameAsHostname] = useState(Sitemanager.nameashostname)
+    const [SMEName, setSMEName] = useState(Sitemanager.name)
+    const [SMEAgents, setSMEAgents] = useState(Sitemanager.agents)
     const [writeData, setWriteData] = useState(false)
-    const [NetworkError, dispatchNetworError] = useReducer(errorReducer, { alertMsg: '', isAlert: false, alertType: '' })
+    const [SitemanagerError, dispatchSitemanagerError] = useReducer(errorReducer, { alertMsg: '', isAlert: false, alertType: '' })
+    const [buttonClicked, setbuttonClicked] = useState(false)
 
     useEffect(() => {
-        if (NetworkError.isAlert === true) {
-            props.sendError(NetworkError)
+        if (SitemanagerError.isAlert === true) {
+            props.sendError(SitemanagerError)
         }
-    }, [NetworkError, NetworkError.isAlert, props])
-
+    }, [buttonClicked])
 
 
     const onFinish = (values) => {
         if (writeData === false) {
-            dispatchNetworError({ type: 'ALERT_ERROR' })
+            dispatchSitemanagerError({ type: 'ALERT_ERROR' })
+            setbuttonClicked(!buttonClicked);
             return;
         } else {
-            dispatchNetworError({})
+            dispatchSitemanagerError({})
         }
         console.log('Success:', values);
     };
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };
-    const onIPConfigChange = (value) => {
-        switch (value) {
-            case 'static':
-                setIPConfig('Static')
-                return;
-            case 'dhcp':
-                setIPConfig('DHCP')
-                return;
-            default:
-                console.log('Unknown input')
-        }
+    const onDomainChange = (value) => {
+        setDomain(value.target.value)
+    };
+    const onServerChange = (value) => {
+        setServer(value.target.value)
+    };
+    const onSMENameAsHostnameChange = (value) => {
+        setSMENameAsHostname(value.target.checked)
+    };
+    const onSMENameChange = (value) => {
+        setSMEName(value.target.value)
     };
 
     const handleWriteData = (value) => {
         setWriteData(value.target.checked)
     }
 
+    const handleAgentsChange = (value) => {
+        updateSitemanagerAgentsConfig(value)
+        setSMEAgents(value)
+        console.log(value)
+    }
+
     return (
         <>
             <Form
                 name="basic"
-
                 initialValues={{
                     remember: true,
                 }}
@@ -75,28 +87,31 @@ const Sitemanager = (props) => {
                 autoComplete="off"
             >
                 <Form.Item
-                    name="IP Configuration"
-                    label="IP Configuration"
+                    name="Domain"
+                    label="Domain"
+                    initialValue={Domain}
                     rules={[
                         {
                             required: true,
                         },
                     ]}
                 >
-                    <Select
-                        placeholder="Select an option between Static and DHCP."
-                        onChange={onIPConfigChange}
+                    <Input
+                        placeholder="Input the Sitemanager Domain of the device"
+
+                        onChange={onDomainChange}
                         allowClear
-                    >
-                        <Option value="static">Static</Option>
-                        <Option value="dhcp">DHCP</Option>
+                    />
 
-                    </Select>
+
+
                 </Form.Item>
-                {IPConfig === 'Static' && <Form.Item
+                <Form.Item
 
-                    label="IP/MASK"
-                    name="IP/MASK"
+                    label="Server"
+                    name="Server"
+                    initialValue={Server}
+
                     rules={[
                         {
                             required: true,
@@ -104,36 +119,13 @@ const Sitemanager = (props) => {
                         },
                     ]}
                 >
-                    <Input placeholder="Separate different IPs with commas. Example: 192.168.1.1/24,10.10.1.1/24." />
-                </Form.Item>}
-
-
-                <Form.Item
-                    label="Default Gateway"
-                    name="Default Gateway"
-                    rules={[
-                        {
-                            required: false,
-                        },
-                    ]}
-                >
-                    <Input />
-                </Form.Item>
-                <Form.Item
-                    label="DNS Server"
-                    name="DNS Server"
-                    rules={[
-                        {
-                            required: false,
-                        },
-                    ]}
-                >
-                    <Input placeholder='Insert IPs separated by commas.' />
+                    <Input allowClear onChange={onServerChange} placeholder="Sitemanager IP Server" />
                 </Form.Item>
 
+
                 <Form.Item
-                    name="Enable writing network data on device"
-                    valuePropName="checked"
+                    name="Set sitemanager name as hostname"
+
                     wrapperCol={{
                         offset: 1,
                         span: 16,
@@ -145,7 +137,39 @@ const Sitemanager = (props) => {
                       },
                   ]} */
                 >
-                    <Checkbox defaultChecked={writeData} onChange={handleWriteData}>Enable writing network data on device</Checkbox>
+                    <Checkbox checked={SMENameAsHostname} onChange={onSMENameAsHostnameChange}>Set sitemanager name as hostname</Checkbox>
+                </Form.Item>
+                {SMENameAsHostname === false &&
+                    <Form.Item
+                        label="Name on Sitemanager"
+                        name="Name on Sitemanager"
+                        initialValue={SMEName}
+                        rules={[
+                            {
+                                required: true,
+                            },
+                        ]}
+                    >
+                        <Input onChange={onSMENameChange} placeholder='Write  device name on Sitemanager' />
+                    </Form.Item>}
+
+                <hr />
+
+                <Form.Item
+                    name="Enable writing data on device"
+                    valuePropName="checked"
+                    wrapperCol={{
+                        offset: 1,
+                        span: 16,
+                    }}
+                    rules={[
+                        {
+                            required: false,
+
+                        },
+                    ]}
+                >
+                    <Checkbox checked={writeData} onChange={handleWriteData}>Enable writing network data on device</Checkbox>
                 </Form.Item>
 
                 <Form.Item
@@ -164,7 +188,15 @@ const Sitemanager = (props) => {
                         </Row>
                     </div>
                 </Form.Item>
-            </Form ></>
+            </Form >
+
+            <AgentsCanva
+                myAgents={SMEAgents}
+                setMyAgents={handleAgentsChange} />
+
+        </>
+
+
 
     );
 };

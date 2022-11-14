@@ -109,7 +109,7 @@ function Channelcanva(props) {
     return (
         <>
 
-            <Offcanvas show={show} onHide={handleClose} scroll='true' backdrop="true" placement='end'>
+            <Offcanvas show={show} onHide={handleClose} scroll='true' backdrop={true} placement='end'>
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title>{selectedChannelID}</Offcanvas.Title>
                 </Offcanvas.Header>

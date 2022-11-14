@@ -17,7 +17,7 @@ const Dashboard = (props) => {
     const [Protocol, updateProtocol] = useState(getProtocolConf())
     useEffect(() => {
         updateProtocol(getProtocolConf())
-    }, [Protocol])
+    }, [])
 
 
     const [Home, setHome] = useState(true)
@@ -25,7 +25,6 @@ const Dashboard = (props) => {
     const [ConnectionStatus, setConnectionStatus] = useState(false)
     const [Tables, setTables] = useState(false)
     const [Sitemanager, setSitemanager] = useState(false)
-    const [updateEffect, setUpdateEffect] = useState()
 
     let [currentPage, setCurrentPage] = useState('Home')
 
@@ -106,9 +105,9 @@ const Dashboard = (props) => {
                     /*    console.log(collapsed, type); */
                 }}
             >
-                <div className="logo" />
+                <div style={{padding: 0}} className="logo" />
 
-                <Row className="justify-content-md-center">
+                <Row style={{width:235}} className="justify-content-md-center">
 
                     <Col className='dashboard-title-col' md="auto"><h3 className='dashboard-title'>DASHBOARD</h3></Col>
 
