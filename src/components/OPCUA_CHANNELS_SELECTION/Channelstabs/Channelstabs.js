@@ -18,8 +18,6 @@ function Channelstabs(props) {
     const { protocolName, toggleModifyPanel, toggleBrowsePanel } = props
     const [Protocol, updateProtocol] = useState(getProtocolConf())
 
-
-
     let Channels = Protocol[protocolName].channels;
 
     const [channelList, updateChannelList] = useState(Channels)
@@ -63,7 +61,8 @@ function Channelstabs(props) {
                     <Col sm={3}>
                         <Nav variant="pills" className="flex-column">
                             {channelList.map((item, indx) => <div key={Math.random()}><Nav.Item key={Math.random()}>
-                                <Nav.Link key={Math.random()} eventKey={indx}>Channel {indx + 1}</Nav.Link>
+                                <Nav.Link key={Math.random()} eventKey={indx}>CHANNEL {indx + 1}</Nav.Link>
+
                             </Nav.Item>
                             </div>)}
 
@@ -75,7 +74,7 @@ function Channelstabs(props) {
                                 <Tab.Pane eventKey={indx}>
                                     <div key={Math.random()} className="row align-items-center">
                                         <div key={Math.random()} className="col">
-                                            {item.device_ID}
+                                            Channel ID: {item.device_ID}, Found: {item['foundTags'] !== undefined ? item['foundTags'] : '0'}, Saved: {item['savedTags'] !== undefined ? item['savedTags'] : '0'}
                                         </div>
                                         <div key={Math.random()} className="col">
                                             <button key={Math.random()} type="button" className="btn btn-outline-primary" onClick={() => modifyChannel(item.device_ID)}>Modify</button>
@@ -84,7 +83,7 @@ function Channelstabs(props) {
                                             <button key={Math.random()} type="button" className="btn btn-outline-danger" onClick={() => deleteChannel(item.device_ID)}>Delete</button>
                                         </div>
                                         <div key={Math.random()} className="col">
-                                            <button key={Math.random()} type="button" className="btn btn-outline-dark" onClick={() => browseTags(item.device_ID)}>Browse Tags</button>
+                                            <button key={Math.random()} type="button" className="btn btn-outline-dark" onClick={() => { browseTags(item.device_ID); props.foundTags(item.device_ID) }}>Browse Tags</button>
                                         </div>
 
                                     </div>

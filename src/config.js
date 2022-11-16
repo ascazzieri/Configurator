@@ -152,7 +152,7 @@ let prova = {
                     "sampling_interval": 1,
                     "tags_file_name": "OPCUA_PLC_tags.json",
                     "select_all_tags_by_default": true,
-                    "thing_name": "rt_PLC"
+                    "thing_name": "rt_PLC",
                 },
 
                 {
@@ -358,9 +358,33 @@ function updateThingworxConfig(newThingworxConfig) {
 
 function updateChannelsConfig(protocolName, newChannelsConfig) {
     config.protocol[protocolName].channels = newChannelsConfig;
-    console.log(config.protocol[protocolName].channels)
+
     return config.protocol[protocolName].channels
     /*Send config to server */
+}
+function updateFoundTags(protocolName, foundTags, channel_ID) {
+    let match = ''
+    config.protocol[protocolName].channels.map((channel, index) => {
+        if (channel['device_ID'] === channel_ID) {
+            match = index;
+        }
+    })
+    if (match !== '') {
+
+        config.protocol[protocolName].channels[match]['foundTags'] = foundTags;
+    } else { console.error('nessun match trovato') }
+
+}
+function updateSavedTags(protocolName, savedTags, channel_ID) {
+    let match = ''
+    config.protocol[protocolName].channels.map((channel, index) => {
+        if (channel['device_ID'] === channel_ID) {
+            match = index;
+        }
+    })
+    if (match !== '') {
+        config.protocol[protocolName].channels[match]['savedTags'] = savedTags;
+    } else { console.error('nessun match trovato') }
 }
 
 function getNetworkConf() {
@@ -381,6 +405,20 @@ function getThingworxConf() {
     return config.thingworx
 
 }
+function getChannelTagsInfo(protocolName, channel_ID) {
+    let match = ''
+    config.protocol[protocolName].channels.map((channel, index) => {
+        if (channel['device_ID'] === channel_ID) {
+            match = index;
+        }
+    })
+    let info = {
+        foundTags: config.protocol[protocolName].channels[match]['foundTags'],
+        savedTags: config.protocol[protocolName].channels[match]['savedTags']
+    };
+    return info
+
+}
 
 function get_twx_conf_hanlder(text) {
     try {
@@ -399,7 +437,8 @@ function get_twx_conf_hanlder(text) {
 
 const getProtocolConf = () => {
     /*   get_opc_conf_handler(''); */
-    getConfFromServer();
+    /*   getConfFromServer(); */
+    console.log(config.protocol)
     return config.protocol;
 }
 
@@ -468,4 +507,4 @@ function connectionStatusRequest(obj) {
 }
 
 
-export { getThingworxConf, getProtocolConf, updateThingworxConfig, updateChannelsConfig, getConfFromServer, downloadConfig, connectionStatusRequest, getNetworkConf, updateNetworkConfig, getSitemanagerConf, updateSitemanagerConfig, updateSitemanagerAgentsConfig }
+export { getThingworxConf, getProtocolConf, updateThingworxConfig, updateChannelsConfig, getConfFromServer, downloadConfig, connectionStatusRequest, getNetworkConf, updateNetworkConfig, getSitemanagerConf, updateSitemanagerConfig, updateSitemanagerAgentsConfig, updateFoundTags, updateSavedTags, getChannelTagsInfo }

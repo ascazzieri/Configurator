@@ -9,6 +9,8 @@ import { GoDiffAdded } from 'react-icons/go'
 import { getProtocolConf } from '../../config'
 import Channelcanva from './Channelcanva/Channelcanva'
 import BrowseTags from './BrowseTags/BrowseTags'
+import { find_tags } from './BrowseTags/tags_operations'
+import { updateFoundTags, updateSavedTags } from '../../config'
 
 
 
@@ -29,6 +31,9 @@ function OPCUA_CHANNELS_SELECTION() {
     const [channelPanel, setChannelPanel] = useState(true)
     const [createNewChannel, setCreateNewChannel] = useState(false)
 
+    /*   const [channelFoundTags, setChannelFoundTags] = useState()
+      const [channelSavedTags, setChannelSavedTags] = useState() */
+
     const handleClose = () => {
         setShow(false);
         setModifyPanel(false);
@@ -44,7 +49,7 @@ function OPCUA_CHANNELS_SELECTION() {
         setShowBrowse(false);
         setBrowsePanel(false);
     }
-    const handleBrowseShow = (id) => {   
+    const handleBrowseShow = (id) => {
         setShowBrowse(true);
         setSelectedChannelBrowse(id)
         setBrowsePanel(true)
@@ -58,6 +63,21 @@ function OPCUA_CHANNELS_SELECTION() {
     const closeCreateChannel = () => {
         setCreateNewChannel(false);
         setChannelPanel(true)
+    }
+    const foundTags = (id) => {
+        let foundTagsNumber = Object.keys(find_tags()).length
+        updateFoundTags("opcua", foundTagsNumber, id)
+
+    }
+
+    const savedTags = (val, id) => {
+        let n = 0;
+        Object.keys(val).map((item, index) => {
+            if (val[item] === true) {
+                n++
+            }
+        })
+        updateSavedTags("opcua", n, id)
     }
 
 
@@ -88,6 +108,8 @@ function OPCUA_CHANNELS_SELECTION() {
                         updateMethod={getProtocolConf}
                         toggleModifyPanel={handleShow}
                         toggleBrowsePanel={handleBrowseShow}
+                        foundTags={foundTags}
+
 
                     />
                 </div>
@@ -110,7 +132,10 @@ function OPCUA_CHANNELS_SELECTION() {
                 handleClose={handleBrowseClose}
                 selectedChannelID={selectedChannelBrowse}
                 updateMethod={getProtocolConf}
-                protocolName="opcua" />}
+                protocolName="opcua"
+                savedTags={savedTags} />
+
+            }
 
 
 
