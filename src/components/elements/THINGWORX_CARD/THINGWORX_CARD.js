@@ -32,7 +32,6 @@ const THINGWORX_CARD = (props) => {
         updateThingworx(updateMethod())
     }, [])
     useEffect(() => {
-        console.log(Thingworx)
         setServerHost(Thingworx.host);
         setAppkey(Thingworx.appkey);
         setProxy(Thingworx.proxy.enabled)

@@ -7,7 +7,7 @@ import { BiWifi, BiWifiOff } from "react-icons/bi";
 import WifiTable from './WifiTable/WifiTable'
 import { checkAerial } from '../../../wifi-networks'
 import { TfiReload } from 'react-icons/tfi'
-import verifyIPCIDR from '../../../utils'
+import { verifyIPCIDR } from '../../../utils'
 import { getNetworkConf, updateNetworkConfig } from '../../../config'
 
 
@@ -16,6 +16,9 @@ const { Option } = Select;
 const errorReducer = (state, action) => {
     if (action.type === 'ALERT_ERROR') {
         return { alertMsg: "Please enable writing permissions before clicking 'Apply' button", isAlert: true, alertType: 'error' }
+    } else if (action.type === 'IP_ERROR') {
+        return { alertMsg: "Please write a correct IP followed by the subnet mask like the example '192.168.1.1/24' ", isAlert: true, alertType: 'error' }
+
     } else {
         return { alertMsg: '', isAlert: false, alertType: '' }
     }
@@ -67,17 +70,17 @@ const Networkparameters = (props) => {
         setDNSServer(Network.static.dns)
         setConnection(Network.if_wan_medium)
         setWifi(Network.wireless)
-      
 
-    },[Network])
+
+    }, [Network])
     useEffect(() => {
         form.setFieldsValue({ ipConfig: IPConfig });
         form.setFieldsValue({ ipMask: IPMask });
         form.setFieldsValue({ defaultGateway: DefaultGTW });
         form.setFieldsValue({ dnsServer: DNSServer });
         form.setFieldsValue({ connection: Connection });
-      
-    },[IPConfig, IPMask, DefaultGTW, DNSServer, Connection])
+
+    }, [IPConfig, IPMask, DefaultGTW, DNSServer, Connection])
 
 
     useEffect(() => {
@@ -121,18 +124,27 @@ const Networkparameters = (props) => {
     }
 
     const onFinish = (values) => {
-        console.log(values)
+        console.log(verifyIPCIDR(IPMask))
         if (writeData === false) {
             dispatchNetworError({ type: 'ALERT_ERROR' })
             setbuttonClicked(!buttonClicked);
 
             return;
+        } else if (verifyIPCIDR(IPMask) === false) {
+            dispatchNetworError({ type: 'IP_ERROR' })
+            setbuttonClicked(!buttonClicked);
+            return
         } else {
+
             dispatchNetworError({})
             handleSubmit();
         }
         console.log('Success:', values);
     };
+
+
+
+
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
     };

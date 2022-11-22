@@ -40,8 +40,6 @@ const Body = (props) => {
 
     const handleError = (alert) => {
         setAlertPopup(alert)
-
-
     }
 
     const setToFalse = () => {
