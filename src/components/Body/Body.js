@@ -48,6 +48,12 @@ const Body = (props) => {
         setAlertPopup(false)
     }
 
+    const closeTWWindow = () => {
+        setThingworxWindow(false)
+        setDashboardWindow(true)
+        setOPC_clientWindow(false)
+    }
+
     return (
         <>
 
@@ -68,6 +74,7 @@ const Body = (props) => {
             {dashboardWindow && <Dashboard sendError={handleError} />}
             {thingworxWindow && <THINGWORX_CARD
                 updateMethod={getThingworxConf}
+                closeWindow={closeTWWindow}
             />}
             {OPC_clientWindow && <OPCUA_CHANNELS_SELECTION />}
             {/*   {OPC_clientWindow && <OPCUA_FORM />} */}

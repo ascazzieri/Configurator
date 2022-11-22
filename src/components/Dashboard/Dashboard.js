@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Networkparameters from './Networkparameters/Networkparameters'
 import Connectionstatus from './Connectionstatus/Connectionstatus'
+import NETWORK_DASHBOARD from './NETWORK_DASHBOARD/NETWORK_DASHBOARD'
 import THINGWORX_DASHBOARD from './THINWORX_DASHBOARD/THINGWORX_DASHBOARD';
 import OPCUA_DASHBOARD from './OPCUA_DASHBOARD/OPCUA_DASHBOARD'
 import SITEMANAGER from './Sitemanager/Sitemanager'
@@ -14,7 +15,7 @@ const { Header, Content, Footer, Sider } = Layout;
 
 const Dashboard = (props) => {
 
-    const [Protocol, updateProtocol] = useState(getProtocolConf())
+    const [Protocol, updateProtocol] = useState()
     useEffect(() => {
         updateProtocol(getProtocolConf())
     }, [])
@@ -105,9 +106,9 @@ const Dashboard = (props) => {
                     /*    console.log(collapsed, type); */
                 }}
             >
-                <div style={{padding: 0}} className="logo" />
+                <div style={{ padding: 0 }} className="logo" />
 
-                <Row style={{width:235}} className="justify-content-md-center">
+                <Row style={{ width: 235 }} className="justify-content-md-center">
 
                     <Col className='dashboard-title-col' md="auto"><h3 className='dashboard-title'>DASHBOARD</h3></Col>
 
@@ -119,7 +120,7 @@ const Dashboard = (props) => {
                     theme="light"
                     mode="inline"
                     defaultSelectedKeys={['1']}
-                    items={['Home', 'Network', 'Connection Status', 'Tables', 'Sitemanager', 'Other Stuff', 'Other Stuff', 'Other Stuff'].map(
+                    items={['Home', 'Network', 'Connection Status', 'Tables', 'Sitemanager', 'Firewall', 'Other Stuff', 'Other Stuff'].map(
                         (item, index) => ({
                             key: String(index + 1),
                             icon: React.createElement(AiOutlineRight),
@@ -159,7 +160,9 @@ const Dashboard = (props) => {
                         {ConnectionStatus && <Connectionstatus
                             sendError={sendAlertToDashboard}
                         />}
-                        {Tables && <><THINGWORX_DASHBOARD />
+                        {Tables && <>
+                            <NETWORK_DASHBOARD />
+                            <THINGWORX_DASHBOARD />
                             {Object.keys(Protocol).map((protocol, index) => <div key={protocol}>
                                 {
                                     protocol === 'opcua' && Protocol.opcua !== undefined ? <OPCUA_DASHBOARD
@@ -185,11 +188,3 @@ const Dashboard = (props) => {
 };
 export default Dashboard;
 
-
-{/*   <THINGWORX_DASHBOARD />
-                <OPCUA_DASHBOARD /> */}
-
-
-
-{/*   <Tags 
-        title = "OPCUA Tags"/> */}

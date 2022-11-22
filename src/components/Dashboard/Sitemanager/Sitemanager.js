@@ -5,7 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { getSitemanagerConf, updateSitemanagerConfig, updateSitemanagerAgentsConfig } from '../../../config';
 import AgentsCanva from './AgentsCanva/AgentsCanva';
-import NotificationPopUp from '../../elements/NotificationPopUp/NotificationPopUp'
+import { TfiReload } from 'react-icons/tfi'
 
 
 const errorReducer = (state, action) => {
@@ -20,17 +20,46 @@ const errorReducer = (state, action) => {
 
 const Sitemanager = (props) => {
 
-    const [Sitemanager, setSitemanager] = useState(getSitemanagerConf())
+    const [form] = Form.useForm();
 
-    const [Domain, setDomain] = useState(Sitemanager.domain)
-    const [Server, setServer] = useState(Sitemanager.server)
-    const [SMENameAsHostname, setSMENameAsHostname] = useState(Sitemanager.nameashostname)
-    const [SMEName, setSMEName] = useState(Sitemanager.name)
-    const [SMEAgents, setSMEAgents] = useState(Sitemanager.agents)
+    const [Sitemanager, setSitemanager] = useState()
+
+    useEffect(() => {
+        setSitemanager(getSitemanagerConf())
+
+    }, [])
+
+    useEffect(() => {
+        if (Sitemanager !== undefined) {
+            setDomain(Sitemanager.domain)
+            setServer(Sitemanager.server);
+            setSMENameAsHostname(Sitemanager.nameashostname)
+            setSMEName(Sitemanager.name)
+            setSMEAgents(Sitemanager.agents)
+        }
+
+    }, [Sitemanager])
+
+
+    const [Domain, setDomain] = useState()
+    const [Server, setServer] = useState()
+    const [SMENameAsHostname, setSMENameAsHostname] = useState()
+    const [SMEName, setSMEName] = useState()
+    const [SMEAgents, setSMEAgents] = useState()
     const [writeData, setWriteData] = useState(false)
     const [SitemanagerError, dispatchSitemanagerError] = useReducer(errorReducer, { alertMsg: '', isAlert: false, alertType: '' })
     const [buttonClicked, setbuttonClicked] = useState(false)
 
+
+
+    useEffect(() => {
+        form.setFieldsValue({ domain: Domain });
+        form.setFieldsValue({ server: Server });
+        form.setFieldsValue({ nameashostname: SMENameAsHostname });
+        form.setFieldsValue({ smeName: SMEName });
+
+
+    }, [Domain, Server, SMENameAsHostname, SMEName])
     useEffect(() => {
         if (SitemanagerError.isAlert === true) {
             props.sendError(SitemanagerError)
@@ -38,6 +67,28 @@ const Sitemanager = (props) => {
     }, [buttonClicked])
 
 
+
+    const handleRefreshData = () => {
+        setDomain(Sitemanager.domain)
+        setServer(Sitemanager.server);
+        setSMENameAsHostname(Sitemanager.nameashostname)
+        setSMEName(Sitemanager.name)
+        setSMEAgents(Sitemanager.agents)
+
+    }
+
+
+
+    const handleSubmit = () => {
+        let newSME = {
+            domain: Domain,
+            server: Server,
+            nameashostname: SMENameAsHostname,
+            name: SMEName,
+        };
+        setSitemanager(newSME)
+        updateSitemanagerConfig(newSME)
+    }
     const onFinish = (values) => {
         if (writeData === false) {
             dispatchSitemanagerError({ type: 'ALERT_ERROR' })
@@ -45,6 +96,7 @@ const Sitemanager = (props) => {
             return;
         } else {
             dispatchSitemanagerError({})
+            handleSubmit();
         }
         console.log('Success:', values);
     };
@@ -79,16 +131,17 @@ const Sitemanager = (props) => {
             <Form
                 name="basic"
                 initialValues={{
-                    remember: true,
+                    remember: false,
                 }}
-
+                form={form}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
             >
                 <Form.Item
-                    name="Domain"
+                    name='domain'
                     label="Domain"
+                    shouldUpdate={true}
                     initialValue={Domain}
                     rules={[
                         {
@@ -98,7 +151,6 @@ const Sitemanager = (props) => {
                 >
                     <Input
                         placeholder="Input the Sitemanager Domain of the device"
-
                         onChange={onDomainChange}
                         allowClear
                     />
@@ -109,7 +161,8 @@ const Sitemanager = (props) => {
                 <Form.Item
 
                     label="Server"
-                    name="Server"
+                    name="server"
+                    shouldUpdate={true}
                     initialValue={Server}
 
                     rules={[
@@ -124,8 +177,8 @@ const Sitemanager = (props) => {
 
 
                 <Form.Item
-                    name="Set sitemanager name as hostname"
-
+                    name="nameashostname"
+                    shouldUpdate={true}
                     wrapperCol={{
                         offset: 1,
                         span: 16,
@@ -141,8 +194,9 @@ const Sitemanager = (props) => {
                 </Form.Item>
                 {SMENameAsHostname === false &&
                     <Form.Item
-                        label="Name on Sitemanager"
+                        label="smeName"
                         name="Name on Sitemanager"
+                        shouldUpdate={true}
                         initialValue={SMEName}
                         rules={[
                             {
@@ -189,10 +243,22 @@ const Sitemanager = (props) => {
                     </div>
                 </Form.Item>
             </Form >
+            {Sitemanager !== undefined && <AgentsCanva
+                setMyAgents={handleAgentsChange} />}
 
-            <AgentsCanva
-                myAgents={SMEAgents}
-                setMyAgents={handleAgentsChange} />
+
+
+            <div className="mb-3">
+                <Row>
+
+                    <Col md={{ offset: 10, span: 3 }}>
+                        <Button variant="primary" size="sm" onClick={handleRefreshData}>
+                            Refresh <TfiReload />
+                        </Button></Col>
+                </Row>
+
+
+            </div>
 
         </>
 

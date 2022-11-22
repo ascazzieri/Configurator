@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './THINGWORX_CARD.css'
 import Pagenum from '../Pagenum/Pagenum';
 import Button from 'react-bootstrap/Button';
@@ -12,21 +12,47 @@ import { updateThingworxConfig } from '../../../config'
 
 const THINGWORX_CARD = (props) => {
 
-    const { updateMethod } = props
+    const { updateMethod, closeWindow } = props
+    const [Thingworx, updateThingworx] = useState(
+        {
+            appkey: '',
+            host: '',
+            proxy: {
+                enabled: '',
+                host: '',
+                port: '',
+                user: ''
+            }
+        }
+    )
 
-    const [Thingworx, updateThingworx] = useState(updateMethod())
 
-    const [ServerHost, setServerHost] = useState(Thingworx.host)
-    const [Appkey, setAppkey] = useState(Thingworx.appkey)
-    const [Proxy, setProxy] = useState(Thingworx.proxy.enabled)
-    const [ProxyHost, setProxyHost] = useState(Thingworx.proxy.host)
-    const [ProxyPort, setProxyPort] = useState(Thingworx.proxy.port)
-    const [ProxyUsername, setProxyUsername] = useState(Thingworx.proxy.username)
-    const [ProxyPassword, setProxyPassword] = useState(Thingworx.proxy.password)
+
+    useEffect(() => {
+        updateThingworx(updateMethod())
+    }, [])
+    useEffect(() => {
+        console.log(Thingworx)
+        setServerHost(Thingworx.host);
+        setAppkey(Thingworx.appkey);
+        setProxy(Thingworx.proxy.enabled)
+        setProxyHost(Thingworx.proxy.host)
+        setProxyPort(Thingworx.proxy.port)
+        setProxyUsername(Thingworx.proxy.username)
+        setProxyPassword(Thingworx.proxy.password)
+    }, [Thingworx])
+
+    const [ServerHost, setServerHost] = useState(Thingworx !== undefined ? Thingworx.host : '')
+    const [Appkey, setAppkey] = useState(Thingworx !== undefined ? Thingworx.appkey : '')
+    const [Proxy, setProxy] = useState(Thingworx !== undefined ? Thingworx.proxy.enabled : '')
+    const [ProxyHost, setProxyHost] = useState(Thingworx !== undefined ? Thingworx.proxy.host : '')
+    const [ProxyPort, setProxyPort] = useState(Thingworx !== undefined ? Thingworx.proxy.port : '')
+    const [ProxyUsername, setProxyUsername] = useState(Thingworx !== undefined ? Thingworx.proxy.username : '')
+    const [ProxyPassword, setProxyPassword] = useState(Thingworx !== undefined ? Thingworx.proxy.password : '')
 
     const [ProgressChannel, setProgressChannel] = useState(1);
 
- 
+
     function handleChange(event) {
         switch (event.target.name) {
             case 'server-host':
@@ -58,20 +84,26 @@ const THINGWORX_CARD = (props) => {
 
     function handleSubmit(event) {
         event.preventDefault();
-        let newThingworx = {
-            host: ServerHost,
-            appkey: Appkey,
-            proxy: {
-                enabled: Proxy,
-                host: ProxyHost,
-                port: ProxyPort,
-                username: ProxyUsername,
-                password: ProxyPassword
+        if (event.nativeEvent.submitter.name === 'submit') {
+            let newThingworx = {
+                host: ServerHost,
+                appkey: Appkey,
+                proxy: {
+                    enabled: Proxy,
+                    host: ProxyHost,
+                    port: ProxyPort,
+                    username: ProxyUsername,
+                    password: ProxyPassword
+                }
+
             }
+            console.log('submit?')
+            updateThingworxConfig(newThingworx)
+            updateThingworx(newThingworx)
 
         }
-        updateThingworxConfig(newThingworx)
-        updateThingworx(newThingworx)
+
+        closeWindow();
 
     }
 
@@ -143,7 +175,7 @@ const THINGWORX_CARD = (props) => {
 
                                             <Form.Group className="mb-3" /* controlId="formBasicPassword" */>
                                                 <Form.Label>Proxy Server Port</Form.Label>
-                                                <Form.Control onChange={handleChange} type="password" placeholder="Proxy Server Port" name='proxy-server-port' defaultValue={ProxyPort} />
+                                                <Form.Control onChange={handleChange} type="text" placeholder="Proxy Server Port" name='proxy-server-port' defaultValue={ProxyPort} />
                                             </Form.Group>
                                             <Form.Group className="mb-3"/*  controlId="formBasicEmail" */>
                                                 <Form.Label>Proxy Username</Form.Label>
@@ -157,16 +189,21 @@ const THINGWORX_CARD = (props) => {
                                         </>}
 
 
-                                        <div className="mb-1">
+                                        <div className="mb-3">
                                             <Row>
-                                                <Col md={{ offset: 7, span: 2 }}>
-                                                    <Button variant="primary" size="md" name="encryption" onClick={handleNextPage}>
-                                                        Next
+                                                <Col md={{ offset: 1, span: 2 }}>
+                                                    <Button variant="danger" size="md" name="back" type='submit'>
+                                                        Back
                                                     </Button></Col>
-                                                <Col md={{ offste: 9, span: 3 }}>
-                                                    <Button variant="success" size="md" name="encryption" type='submit'>
+                                                <Col md={{ offset: 2, span: 1 }}>
+                                                    <Button variant="success" size="md" name="submit" type='submit'>
                                                         Apply
                                                     </Button></Col>
+                                                <Col md={{ offset: 3, span: 1 }}>
+                                                    <Button type='button' variant="primary" size="md" name="encryption" onClick={handleNextPage}>
+                                                        Next
+                                                    </Button></Col>
+
                                             </Row>
                                         </div>
                                     </>}

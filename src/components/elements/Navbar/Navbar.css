@@ -7,3 +7,8 @@
 a {
     cursor: pointer;
 }
+.download-button{
+    height: auto;
+    width: auto;
+    margin-right: 10px;
+}

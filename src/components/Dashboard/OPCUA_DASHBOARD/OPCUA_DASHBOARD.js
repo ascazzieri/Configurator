@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, {useState } from 'react'
 import './OPCUA_DASHBOARD.css'
 import PROTOCOL_TABLE from '../Tables/PROTOCOL_TABLE/PROTOCOL_TABLE'
 import Pagenum from '../../elements/Pagenum/Pagenum'
@@ -31,20 +31,19 @@ const OPCUA_DASHBOARD = () => {
   let EncryptionKeys = [];
 
 
-
   channels.map(channel => {
     let { connection_parameter, device_ID, sampling_interval, tags_file_name, select_all_tags_by_default, thing_name } = channel;
-    for (const [key, values] of Object.entries(channel)) {
+    for (const [key] of Object.entries(channel)) {
       Keys.push(key)
     }
 
-    for (const [ckeys, cvalues] of Object.entries(connection_parameter)) {
+    for (const [ckeys] of Object.entries(connection_parameter)) {
       ConnectionParametersKeys.push(ckeys)
     }
-    for (const [akeys, avalues] of Object.entries(connection_parameter.authentication)) {
+    for (const [akeys] of Object.entries(connection_parameter.authentication)) {
       AutenticationKeys.push(akeys)
     }
-    for (const [ekeys, evalues] of Object.entries(connection_parameter.encryption)) {
+    for (const [ekeys] of Object.entries(connection_parameter.encryption)) {
       EncryptionKeys.push(ekeys)
     }
     server_headers = [Keys[0], ConnectionParametersKeys[0], ConnectionParametersKeys[1]];
@@ -59,6 +58,7 @@ const OPCUA_DASHBOARD = () => {
     encryption_headers = [EncryptionKeys[0], EncryptionKeys[1], EncryptionKeys[2]]
     encryption_values.push([connection_parameter.encryption.enabled.toString(), connection_parameter.encryption.cert_filename, connection_parameter.encryption.key_filename])
 
+    return 0
   })
 
   Keys.splice(6, (6 * (channels.length - 1)));
@@ -102,7 +102,7 @@ const OPCUA_DASHBOARD = () => {
 
               />
               <PROTOCOL_TABLE
-                title="OPCUA Users"
+                title="OPCUA Authentication"
                 cardNumber={2}
                 password={2}
                 channels={channels}

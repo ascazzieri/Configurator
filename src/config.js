@@ -1,7 +1,6 @@
 let prova = {
     "network": {
         "routes": {},
-        "net_scan": [],
         "dhcp": false,
         "static": {
             "ip": [
@@ -24,7 +23,6 @@ let prova = {
 
         "ntp": [],
         "nat": true,
-        "machine_to_internet": true,
         "ALIAS": {
             "any_ip": "0.0.0.0/0",
             "syslog_server": "",
@@ -80,7 +78,6 @@ let prova = {
     "sitemanager": {
         "domain": "Talea.Accounts",
         "server": "gm.ima.it 10.10.83.66 81.208.52.93",
-        "onlybidir": false,
         "enabled": true,
         "nameashostname": true,
         "name": "A207560000-0032",
@@ -166,7 +163,7 @@ let prova = {
                             "password": "admin"
                         },
                         "encryption": {
-                            "enabled": false,
+                            "enabled": true,
                             "cert_filename": "cert.pem",
                             "key_filename": "key.pem"
                         }
@@ -182,7 +179,7 @@ let prova = {
                         "opc_server_ip": "10.2.240.233",
                         "opc_server_port": 4840,
                         "authentication": {
-                            "enabled": true,
+                            "enabled": false,
                             "username": "admin",
                             "password": "admin"
                         },
@@ -208,7 +205,7 @@ let prova = {
                             "password": "admin"
                         },
                         "encryption": {
-                            "enabled": false,
+                            "enabled": true,
                             "cert_filename": "cert.pem",
                             "key_filename": "key.pem"
                         }
@@ -318,6 +315,7 @@ let config = {}
 
 function getConfFromServer() {
     config = JSON.parse(JSON.stringify(prova))
+    console.log('get Conf from server')
     return config;
 }
 getConfFromServer();
@@ -364,11 +362,17 @@ function updateChannelsConfig(protocolName, newChannelsConfig) {
 }
 function updateFoundTags(protocolName, foundTags, channel_ID) {
     let match = ''
-    config.protocol[protocolName].channels.map((channel, index) => {
-        if (channel['device_ID'] === channel_ID) {
-            match = index;
-        }
-    })
+    try {
+        config.protocol[protocolName].channels.map((channel, index) => {
+            if (channel['device_ID'] === channel_ID) {
+                match = index;
+            }
+            return 0
+        })
+    } catch (error) {
+        console.error(error)
+    }
+
     if (match !== '') {
 
         config.protocol[protocolName].channels[match]['foundTags'] = foundTags;
@@ -377,23 +381,35 @@ function updateFoundTags(protocolName, foundTags, channel_ID) {
 }
 function updateSavedTags(protocolName, savedTags, channel_ID) {
     let match = ''
-    config.protocol[protocolName].channels.map((channel, index) => {
-        if (channel['device_ID'] === channel_ID) {
-            match = index;
-        }
-    })
-    if (match !== '') {
-        config.protocol[protocolName].channels[match]['savedTags'] = savedTags;
-    } else { console.error('nessun match trovato') }
+    try {
+        config.protocol[protocolName].channels.map((channel, index) => {
+            if (channel['device_ID'] === channel_ID) {
+                match = index;
+            }
+            return 0
+        })
+        if (match !== '') {
+            config.protocol[protocolName].channels[match]['savedTags'] = savedTags;
+        } else { console.error('nessun match trovato') }
+    } catch (error) {
+        console.error(error)
+    }
+
 }
 
 function getNetworkConf() {
-    getConfFromServer();
+    /*  getConfFromServer(); */
+    console.log('get NTW server')
     return config.network;
 }
 function getSitemanagerConf() {
-    getConfFromServer();
+    console.log('Get SM Cnf')
+    /*  getConfFromServer(); */
     return config.sitemanager;
+}
+function getSitemanagerAgentConfig() {
+    console.log('Get SME Agent Conf')
+    return config.sitemanager.agents;
 }
 
 
@@ -401,22 +417,31 @@ function getThingworxConf() {
     /*   get_xhr("get_twx_conf()", "/conf/thingworx", get_twx_conf_hanlder) */
 
     /*  get_twx_conf_hanlder('') */
-    getConfFromServer();
+    /*     getConfFromServer(); */
+    console.log('get TW Conf')
     return config.thingworx
 
 }
 function getChannelTagsInfo(protocolName, channel_ID) {
     let match = ''
-    config.protocol[protocolName].channels.map((channel, index) => {
-        if (channel['device_ID'] === channel_ID) {
-            match = index;
-        }
-    })
-    let info = {
-        foundTags: config.protocol[protocolName].channels[match]['foundTags'],
-        savedTags: config.protocol[protocolName].channels[match]['savedTags']
-    };
-    return info
+    try {
+        config.protocol[protocolName].channels.map((channel, index) => {
+            if (channel['device_ID'] === channel_ID) {
+                match = index;
+            }
+            return 0
+        })
+        let info = {
+            foundTags: config.protocol[protocolName].channels[match]['foundTags'],
+            savedTags: config.protocol[protocolName].channels[match]['savedTags']
+        };
+        console.log(info)
+        return info
+    } catch (error) {
+        console.error(error)
+    }
+
+
 
 }
 
@@ -445,10 +470,11 @@ const getProtocolConf = () => {
 const downloadConfig = () => {
     let currentConfig = getConfFromServer();
     let data = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentConfig));
-    let dateTime = new Date().toLocaleDateString();
+    let myDate = new Date();
+    let dateTime = myDate.toLocaleDateString();
     let downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href", data);
-    downloadAnchorNode.setAttribute("download", `conf_${dateTime}.json`);
+    downloadAnchorNode.setAttribute("download", `conf_${dateTime}-${myDate.getHours()}-${myDate.getMinutes()}-${myDate.getSeconds()}.json`);
     document.body.appendChild(downloadAnchorNode); // required for firefox
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
@@ -507,4 +533,4 @@ function connectionStatusRequest(obj) {
 }
 
 
-export { getThingworxConf, getProtocolConf, updateThingworxConfig, updateChannelsConfig, getConfFromServer, downloadConfig, connectionStatusRequest, getNetworkConf, updateNetworkConfig, getSitemanagerConf, updateSitemanagerConfig, updateSitemanagerAgentsConfig, updateFoundTags, updateSavedTags, getChannelTagsInfo }
+export { getThingworxConf, getProtocolConf, updateThingworxConfig, updateChannelsConfig, getConfFromServer, downloadConfig, connectionStatusRequest, getNetworkConf, updateNetworkConfig, getSitemanagerConf, updateSitemanagerConfig, updateSitemanagerAgentsConfig, getSitemanagerAgentConfig, updateFoundTags, updateSavedTags, getChannelTagsInfo }

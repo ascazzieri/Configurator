@@ -120,7 +120,7 @@ function Navbar(props) {
                     </div>
 
                     <DateTime />
-                    <Button onClick={downloadConfig} variant="outline-primary">Download Configuration </Button>
+                    <Button className='download-button' onClick={downloadConfig} variant="outline-primary">Download </Button>
 
                 </div>
 

@@ -6,41 +6,49 @@ import { Form, Input, Popconfirm, Table, Select } from 'antd';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import './AgentsCanva.css'
 import { agents_vendor_list, agent_vendor_device_type } from './agents_data'
+import { getSitemanagerAgentConfig } from '../../../../config'
 
 function AgentsCanva(props) {
 
 
     const [show, setShow] = useState(false);
+    const [myAgents, setMyAgents] = useState(getSitemanagerAgentConfig());
+
+    /*     useEffect(() => {
+            setMyAgents(getSitemanagerAgentConfig())
+        }, []) */
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
 
     const [isMessage, setMessage] = useState(false)
-
-    let agentName = Object.keys(props.myAgents)
+    let agentName = []
     let agentData = [];
+    if (myAgents !== undefined) {
+        agentName = Object.keys(myAgents)
+        agentName.map((element, index) => {
 
-    agentName.map((element, index) => {
 
+            let item = {
+                key: Math.random(),
+                agentCount: `Agent${index + 1}`,
+                agent: myAgents[`Agent${index + 1}`].agent,
+                name: myAgents[`Agent${index + 1}`].name,
+                sn: myAgents[`Agent${index + 1}`].sn,
+                cfg: myAgents[`Agent${index + 1}`].cfg
+            }
+            if (index === 10) {
 
-        let item = {
-            key: Math.random(),
-            agentCount: `Agent${index + 1}`,
-            agent: props.myAgents[`Agent${index + 1}`].agent,
-            name: props.myAgents[`Agent${index + 1}`].name,
-            sn: props.myAgents[`Agent${index + 1}`].sn,
-            cfg: props.myAgents[`Agent${index + 1}`].cfg
-        }
-        if (index === 10) {
+                //diapcashError
 
-            //diapcashError
+            } else if (index < 10) {
+                agentData.push(item)
+            }
 
-        } else if (index < 10) {
-            agentData.push(item)
-        }
+        })
 
-    })
+    }
     const agentVendor = agents_vendor_list;
     const deviceType = agent_vendor_device_type;
 
@@ -279,6 +287,7 @@ function AgentsCanva(props) {
         })
 
         props.setMyAgents(newData)
+        setMyAgents(newData)
         setCount(1)
 
     }
@@ -286,16 +295,6 @@ function AgentsCanva(props) {
     const onFinish = () => {
         handleAgentSubmit()
 
-        /*   if (writeData === false) {
-              dispatchNetworError({ type: 'ALERT_ERROR' })
-              setbuttonClicked(!buttonClicked);
-     
-              return;
-          } else {
-              dispatchNetworError({})
-              handleSubmit();
-          }
-          console.log('Success:', values); */
     };
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
@@ -384,6 +383,7 @@ function AgentsCanva(props) {
                             </Row>
                         </div>
                     </Form >
+                
 
 
                 </Offcanvas.Body>
